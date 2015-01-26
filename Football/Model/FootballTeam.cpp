@@ -32,6 +32,7 @@ void FootballTeam::debugPrint() {
 	if (!Utils::debugOn()) {
 		return;
 	}
+
 	std::stringstream teamPrint;
 	teamPrint << id << ": " << name;
 	Utils::print(teamPrint.str());
