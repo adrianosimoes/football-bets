@@ -11,6 +11,7 @@
 
 FootballLeague::FootballLeague() {
 	games = vector<FootballGame*>();
+	teams = map<string, FootballTeam*>();
 }
 
 string FootballLeague::getName() {
@@ -21,8 +22,20 @@ void FootballLeague::setName(string leagueName) {
 	name = leagueName;
 }
 
-void FootballLeague::addTeam(string teamName) {
-	teams.insert(teamName);
+FootballTeam* FootballLeague::addTeam(string teamName) {
+	FootballTeam* team = new FootballTeam(teamName);
+	teams[teamName] = team;
+	return team;
+}
+
+FootballTeam* FootballLeague::getTeam(string teamName) {
+	std::map<string, FootballTeam*>::iterator it;
+	it = teams.find(teamName);
+
+	if (it != teams.end()) {
+		return it->second;
+	} else
+		return addTeam(teamName);
 }
 
 void FootballLeague::addGame(FootballGame* game) {
@@ -30,14 +43,20 @@ void FootballLeague::addGame(FootballGame* game) {
 }
 
 void FootballLeague::debugPrint() {
-	if(!Utils::debugOn()){
+	if (!Utils::debugOn()) {
 		return;
 	}
 	Utils::print("Printing League:");
+	Utils::print("Teams:");
+	printf("Size: %ld\n", teams.size());
+	map<string, FootballTeam*>::iterator i;
+	for (i = teams.begin(); i != teams.end(); i++) {
+		i->second->debugPrint();
+	}
 	Utils::print("Games:");
-	vector<FootballGame*>::iterator i;
-	for (i = games.begin(); i != games.end(); i++) {
-		(*i)->debugPrint();
+	vector<FootballGame*>::iterator j;
+	for (j = games.begin(); j != games.end(); j++) {
+		(*j)->debugPrint();
 	}
 }
 

@@ -14,7 +14,7 @@
 
 //File processing Constants:
 //Number of Fields
-#define CSV_FIELDS 10
+#define CSV_FIELDS 70
 #define CSV_DATE 1
 #define CSV_HOME_TEAM_NAME 2
 #define CSV_AWAY_TEAM_NAME 3

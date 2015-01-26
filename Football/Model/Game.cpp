@@ -7,9 +7,9 @@
 #include "Game.h"
 #include "../Utils/Utils.h"
 
-FootballGame::FootballGame(string matchDate, string homeTeamName,
-		string awayTeamName, int homeS, int awayS) :
-		date(matchDate), homeTeam(homeTeamName), awayTeam(awayTeamName), homeScore(
+FootballGame::FootballGame(string matchDate, FootballTeam* homeTeam,
+		FootballTeam* awayTeam, int homeS, int awayS) :
+		date(matchDate), homeTeam(homeTeam), awayTeam(awayTeam), homeScore(
 				homeS), awayScore(awayS) {
 }
 
@@ -18,8 +18,8 @@ void FootballGame::debugPrint() {
 		return;
 	}
 	std::stringstream gamePrint;
-	gamePrint << homeTeam << " " << homeScore << " - " << awayScore << " "
-			<< awayTeam;
+	gamePrint << homeTeam->getName() << " " << homeScore << " - " << awayScore << " "
+			<< awayTeam->getName();
 	Utils::print(gamePrint.str());
 }
 

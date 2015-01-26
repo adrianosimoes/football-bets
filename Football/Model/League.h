@@ -10,17 +10,19 @@
 
 #include "../includes.h"
 #include "Game.h"
+#include "FootballTeam.h"
 
 class FootballLeague {
 protected:
 	string name;
 	vector<FootballGame*> games;
-	set<string> teams;
+	map<string, FootballTeam*> teams;
+	FootballTeam* addTeam(string name);
 public:
 	FootballLeague();
 	void setName(string name);
 	string getName();
-	void addTeam(string name);
+	FootballTeam* getTeam(string name);
 	void addGame(FootballGame* game);
 	void debugPrint();
 	virtual ~FootballLeague();

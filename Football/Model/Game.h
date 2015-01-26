@@ -9,16 +9,17 @@
 #define MODEL_GAME_H_
 
 #include "../includes.h"
+class FootballTeam;
 
-class FootballGame{
+class FootballGame {
 protected:
-	string date, homeTeam,  awayTeam;
-	int  homeScore,  awayScore;
+	string date;
+	FootballTeam* homeTeam, *awayTeam;
+	int homeScore, awayScore;
 public:
-	FootballGame(string date, string homeTeam, string awayTeam, int homeScore, int awayScore );
+	FootballGame(string date, FootballTeam* homeTeam, FootballTeam* awayTeam,
+			int homeScore, int awayScore);
 	void debugPrint();
 };
-
-
 
 #endif /* MODEL_GAME_H_ */
