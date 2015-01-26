@@ -138,12 +138,15 @@ void Utils::readMatchesToLeague(char* filename, FootballLeague* league) {
 		date = sdate.str();
 		homeTeamName = shome.str();
 		awayTeamName = saway.str();
+
+		FootballTeam* homeTeam = league->getTeam(homeTeamName);
+		FootballTeam* awayTeam = league->getTeam(awayTeamName);
+
 		homeTeamScore = fields[CSV_HOME_TEAM_SCORE];
 		awayTeamScore = fields[CSV_AWAY_TEAM_SCORE];
 		homeTeamGoals = atoi((char*) homeTeamScore.c_str());
 		awayTeamGoals = atoi((char*) awayTeamScore.c_str());
-		FootballTeam* homeTeam = league->getTeam(homeTeamName);
-		FootballTeam* awayTeam = league->getTeam(awayTeamName);
+
 		FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
 				homeTeamGoals, awayTeamGoals);
 
