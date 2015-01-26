@@ -20,6 +20,7 @@ void FootballGame::debugPrint() {
 	std::stringstream gamePrint;
 	gamePrint << homeTeam->getName() << " " << homeScore << " - " << awayScore << " "
 			<< awayTeam->getName();
+
 	Utils::print(gamePrint.str());
 }
 
