@@ -118,7 +118,7 @@ void Utils::readMatchesToLeague(char* filename, FootballLeague* league) {
 	getline(newProcessing, discardLine);
 
 	while (!newProcessing.eof()) {
-		string homeTeamName, awayTeamName, date;
+		string homeTeamName, awayTeamName, date, homeTeamScore, awayTeamScore;
 		int homeTeamGoals, awayTeamGoals;
 		vector<string> fields(CSV_FIELDS);
 		string field, period, scannedLine;
@@ -138,9 +138,10 @@ void Utils::readMatchesToLeague(char* filename, FootballLeague* league) {
 		date = sdate.str();
 		homeTeamName = shome.str();
 		awayTeamName = saway.str();
-
-		homeTeamGoals = atoi((char*) fields[CSV_HOME_TEAM_SCORE].c_str());
-		awayTeamGoals = atoi((char*) fields[CSV_AWAY_TEAM_SCORE].c_str());
+		homeTeamScore = fields[CSV_HOME_TEAM_SCORE];
+		awayTeamScore = fields[CSV_AWAY_TEAM_SCORE];
+		homeTeamGoals = atoi((char*) homeTeamScore.c_str());
+		awayTeamGoals = atoi((char*) awayTeamScore.c_str());
 		FootballTeam* homeTeam = league->getTeam(homeTeamName);
 		FootballTeam* awayTeam = league->getTeam(awayTeamName);
 		FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
