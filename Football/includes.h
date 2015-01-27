@@ -24,6 +24,7 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <stdint.h>
 using namespace std;
 
 #endif /* UTILS_INCLUDES_H_ */

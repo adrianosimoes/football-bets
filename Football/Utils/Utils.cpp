@@ -8,8 +8,10 @@
 #include "Utils.h"
 using namespace std;
 
+map<string, string> Utils::configMap = map<string, string>();
+
 void Utils::debugprint(string print) {
-	if (!Main::configMap[string("debug")].compare("true")) {
+	if (!Utils::configMap[string("debug")].compare("true")) {
 		printf("%s\n", print.c_str());
 	}
 }
@@ -19,7 +21,7 @@ void Utils::print(string print) {
 }
 
 bool Utils::debugOn() {
-	return !Main::configMap[string("debug")].compare("true");
+	return !Utils::configMap[string("debug")].compare("true");
 }
 
 //Impl. from: http://www.masaers.com/2013/10/08/Implementing-Poisson-pmf.html

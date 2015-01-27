@@ -17,7 +17,6 @@
 class Main{
 public:
 	Main(){};
-	static map<string, string> configMap;
 };
 
 #endif /* MAIN_H_ */

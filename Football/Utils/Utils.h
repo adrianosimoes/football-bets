@@ -12,9 +12,9 @@
 #include "../Model/League.h"
 #include "../Main.h"
 
-
 class Utils {
 public:
+	static map<string, string> configMap;
 	static map<unsigned int, FootballLeague> analyseFolder(string dirName,
 			bool reverse);
 	static bool debugOn();

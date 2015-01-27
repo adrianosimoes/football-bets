@@ -40,6 +40,5 @@ void FootballTeam::debugPrint() {
 }
 
 FootballTeam::~FootballTeam() {
-	// TODO Auto-generated destructor stub
 }
 

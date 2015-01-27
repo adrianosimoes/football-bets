@@ -7,10 +7,6 @@
 
 #include "Main.h"
 
-map<string, string> Main::configMap = map<string, string>();
-
-//map<unsigned int, Stock> analyseFolder(string dir, bool reverse);
-
 void loadConfig(char* configFilename) {
 	ifstream configFile(configFilename);
 
@@ -50,7 +46,7 @@ void loadConfig(char* configFilename) {
 			key = string(tok);
 			tok = strtok(NULL, " =\r");
 			value = string(tok);
-			Main::configMap[key] = value;
+			Utils::configMap[key] = value;
 		}
 	}
 	configFile.close();
@@ -68,11 +64,11 @@ int main(int argc, char **argv) {
 			loadConfig(NULL);
 
 		// Detecting the algorithm to use
-		string algorithm = Main::configMap[string("algorithm")];
+		string algorithm = Utils::configMap[string("algorithm")];
 
 		if (!algorithm.compare("football")) {
 			map<unsigned int, FootballLeague> leagues = DataLoad::analyseFolder(
-					Main::configMap[string("dirCotacoes")]);
+					Utils::configMap[string("dirCotacoes")]);
 			printf("Executing Football\n");
 			map<unsigned int, FootballLeague>::iterator i;
 			for (i = leagues.begin(); i != leagues.end(); i++) {
