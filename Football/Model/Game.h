@@ -19,6 +19,13 @@ protected:
 public:
 	FootballGame(string date, FootballTeam* homeTeam, FootballTeam* awayTeam,
 			int homeScore, int awayScore);
+	FootballTeam* getHomeTeam();
+	FootballTeam* getAwayTeam();
+	int getHomeScore();
+	int getAwayScore();
+	bool isHomeWin();
+	bool isDraw();
+	bool isAwayWin();
 	void debugPrint();
 };
 

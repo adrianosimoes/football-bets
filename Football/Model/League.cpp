@@ -39,6 +39,8 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 }
 
 void FootballLeague::addGame(FootballGame* game) {
+	game->getHomeTeam()->addGame(game);
+	game->getAwayTeam()->addGame(game);
 	games.push_back(game);
 }
 

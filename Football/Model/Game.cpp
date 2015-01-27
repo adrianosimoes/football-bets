@@ -13,13 +13,35 @@ FootballGame::FootballGame(string matchDate, FootballTeam* homeTeam,
 				homeS), awayScore(awayS) {
 }
 
+FootballTeam* FootballGame::getHomeTeam() {
+	return homeTeam;
+}
+FootballTeam* FootballGame::getAwayTeam() {
+	return awayTeam;
+}
+int FootballGame::getHomeScore() {
+	return homeScore;
+}
+int FootballGame::getAwayScore() {
+	return awayScore;
+}
+bool FootballGame::isHomeWin() {
+	return homeScore > awayScore;
+}
+bool FootballGame::isDraw() {
+	return homeScore == awayScore;
+}
+bool FootballGame::isAwayWin() {
+	return awayScore > homeScore;
+}
+
 void FootballGame::debugPrint() {
 	if (!Utils::debugOn()) {
 		return;
 	}
 	std::stringstream gamePrint;
-	gamePrint << homeTeam->getName() << " " << homeScore << " - " << awayScore << " "
-			<< awayTeam->getName();
+	gamePrint << homeTeam->getName() << " " << homeScore << " - " << awayScore
+			<< " " << awayTeam->getName();
 
 	Utils::print(gamePrint.str());
 }

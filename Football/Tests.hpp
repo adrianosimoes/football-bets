@@ -1,17 +1,4 @@
 /*
- * Tests.h
- *
- *  Created on: 27/01/2015
- *      Author: Adriano
- */
-
-#ifndef UTILS_TESTS_H_
-#define UTILS_TESTS_H_
-
-#include "includes.h"
-
-
-/*
  *  CATCH v1.0 build 53 (master branch)
  *  Generated: 2014-08-20 08:08:19.533804
  *  ----------------------------------------------------------
@@ -1706,7 +1693,7 @@ namespace Catch {
         double getElapsedSeconds() const;
 
     private:
-        uint64_t m_ticks;
+        unsigned int m_ticks;
     };
 
 } // namespace Catch
@@ -9007,7 +8994,3 @@ using Catch::Detail::Approx;
 #endif
 
 #endif // TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
-
-
-
-#endif /* UTILS_TESTS_H_ */
