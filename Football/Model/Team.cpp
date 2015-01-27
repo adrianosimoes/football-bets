@@ -5,7 +5,8 @@
  *      Author: Adriano
  */
 
-#include "FootballTeam.h"
+#include "Team.h"
+
 #include "../Utils/Utils.h"
 
 int FootballTeam::idCounter = 1;

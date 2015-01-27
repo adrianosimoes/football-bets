@@ -10,7 +10,7 @@
 
 #include "../includes.h"
 #include "Game.h"
-#include "FootballTeam.h"
+#include "Team.h"
 
 class FootballLeague {
 protected:

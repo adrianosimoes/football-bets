@@ -71,19 +71,15 @@ int main(int argc, char **argv) {
 		string algorithm = Main::configMap[string("algorithm")];
 
 		if (!algorithm.compare("football")) {
-			map<unsigned int, FootballLeague> leagues = Utils::analyseFolder(
-					Main::configMap[string("dirCotacoes")], false);
+			map<unsigned int, FootballLeague> leagues = DataLoad::analyseFolder(
+					Main::configMap[string("dirCotacoes")]);
 			printf("Executing Football\n");
 			map<unsigned int, FootballLeague>::iterator i;
 			for (i = leagues.begin(); i != leagues.end(); i++) {
 				i->second.debugPrint();
 			}
-			/*std::random_device rd;
-			 std::mt19937 gen(rd());
-			 // if an event occurs 4 times a minute on average
-			 // how often is it that it occurs n times in one minute?
-			 std::poisson_distribution<> d(4);
-			 printf("Poisson res: %d %d.\n", d(gen), d(gen));*/
+			printf("Poisson de 0 golos com media 1: %f. com media 2:%f",
+					Utils::poisson_pmf(1.5, 1), Utils::poisson_pmf(1.5, 2));
 		} else {
 			printf("Unknown Algorithm:%s\n", algorithm.c_str());
 		}

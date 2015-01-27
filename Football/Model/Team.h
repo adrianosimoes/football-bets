@@ -5,8 +5,8 @@
  *      Author: Adriano
  */
 
-#ifndef MODEL_FOOTBALLTEAM_H_
-#define MODEL_FOOTBALLTEAM_H_
+#ifndef MODEL_TEAM_H_
+#define MODEL_TEAM_H_
 
 #include "../includes.h"
 #include "Game.h"
@@ -26,4 +26,4 @@ public:
 	virtual ~FootballTeam();
 };
 
-#endif /* MODEL_FOOTBALLTEAM_H_ */
+#endif /* MODEL_TEAM_H_ */
