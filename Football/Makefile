@@ -12,15 +12,16 @@ FILE_3 =	bin/UserData
 LIBS = 		
 
 TARGET =	bin/Football.exe
+TESTS = bin/Tests.exe
 
 $(TARGET):	$(OBJECTS) bin/Main.o copyConfigFiles
 	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Main.o $(LIBS) -o $(TARGET)
 	
-bin/Tests.exe: $(OBJECTS) bin/Tests.o 
-	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Tests.o $(LIBS) -o bin/Tests.exe
+$(TESTS): $(OBJECTS) bin/Tests.o 
+	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Tests.o $(LIBS) -o $(TESTS)
 
 all:	$(TARGET) tests
-		bin/Tests.exe
+		$(TESTS)
 #		mkdir -p ${FILE_2}
 #		mkdir -p ${FILE_3}
 
