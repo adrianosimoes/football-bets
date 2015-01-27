@@ -13,8 +13,8 @@ LIBS =
 
 TARGET =	bin/Football.exe
 
-$(TARGET):	$(OBJECTS) Main.o copyConfigFiles
-	$(CXX) $(CXXFLAGS) $(OBJECTS) Main.o $(LIBS) -o $(TARGET)
+$(TARGET):	$(OBJECTS) bin/Main.o copyConfigFiles
+	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Main.o $(LIBS) -o $(TARGET)
 	
 bin/Tests.exe: $(OBJECTS) bin/Tests.o 
 	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Tests.o $(LIBS) -o bin/Tests.exe
@@ -31,10 +31,6 @@ copyConfigFiles:
 	
 bin/%.o: %.cpp %.h
 	$(CXX) $(CXXCOMPFLAGS) $< -o $@
-
-#bin/Tests.o: Tests.cpp
-#	 $(CXX) $(CXXCOMPFLAGS) -c -o bin/Tests/Tests.o Utils/Tests/Tests.cpp
-
 
 	
 clean:
