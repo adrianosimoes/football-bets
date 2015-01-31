@@ -12,11 +12,11 @@
 #include "Model/Game.h"
 #include "Utils/Utils.h"
 #include "Utils/DataLoad.h"
+#include "Predict/PredictLeaguePoisson.h"
 
 
-class Main{
-public:
-	Main(){};
-};
+void predictLeagues(map<unsigned int, FootballLeague*> leagues);
+
+
 
 #endif /* MAIN_H_ */

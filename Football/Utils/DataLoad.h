@@ -10,6 +10,7 @@
 
 #include "../includes.h"
 #include "../Model/League.h"
+#include "../Model/Game.h"
 #include "Utils.h"
 
 //File processing Constants:
@@ -23,7 +24,7 @@
 
 class DataLoad {
 public:
-	static map<unsigned int, FootballLeague> analyseFolder(string dirName);
+	static map<unsigned int, FootballLeague*> analyseFolder(string dirName);
 	static void readMatchesToLeague(char* filename, FootballLeague* league);
 	virtual ~DataLoad();
 };

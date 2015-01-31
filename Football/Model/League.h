@@ -15,7 +15,7 @@
 class FootballLeague {
 protected:
 	string name;
-	vector<FootballGame*> games;
+	vector<FootballGame*>* games;
 	map<string, FootballTeam*> teams;
 	FootballTeam* addTeam(string name);
 public:
@@ -23,6 +23,7 @@ public:
 	void setName(string name);
 	string getName();
 	FootballTeam* getTeam(string name);
+	vector<FootballGame*>* getGames();
 	void addGame(FootballGame* game);
 	void debugPrint();
 	virtual ~FootballLeague();

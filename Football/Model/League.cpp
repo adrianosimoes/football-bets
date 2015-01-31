@@ -10,7 +10,7 @@
 #include "../Utils/Utils.h"
 
 FootballLeague::FootballLeague() {
-	games = vector<FootballGame*>();
+	games = new vector<FootballGame*>();
 	teams = map<string, FootballTeam*>();
 }
 
@@ -38,10 +38,14 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 		return addTeam(teamName);
 }
 
+vector<FootballGame*>* FootballLeague::getGames() {
+	return games;
+}
+
 void FootballLeague::addGame(FootballGame* game) {
 	game->getHomeTeam()->addGame(game);
 	game->getAwayTeam()->addGame(game);
-	games.push_back(game);
+	games->push_back(game);
 }
 
 void FootballLeague::debugPrint() {
@@ -57,14 +61,14 @@ void FootballLeague::debugPrint() {
 	}
 	Utils::print("Games:");
 	vector<FootballGame*>::iterator j;
-	for (j = games.begin(); j != games.end(); j++) {
+	for (j = games->begin(); j != games->end(); j++) {
 		(*j)->debugPrint();
 	}
 }
 
 FootballLeague::~FootballLeague() {
 	vector<FootballGame*>::iterator i;
-	for (i = games.begin(); i != games.end(); i++) {
+	for (i = games->begin(); i != games->end(); i++) {
 		delete *i;
 	}
 }

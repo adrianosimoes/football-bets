@@ -17,12 +17,17 @@ protected:
 	int id;
 	string name;
 	vector<FootballGame*> games;
+	int homeGoals,awayGoals,homeConceded,awayConceded, homeMatches,awayMatches;
 public:
 	FootballTeam(string name);
 	string getName();
 	void addGame(FootballGame* game);
 	int getID();
 	void debugPrint();
+	double getHomeScoreRating();
+	double getAwayScoreRating();
+	double getHomeDefenseRating();
+	double getAwayDefenseRating();
 	virtual ~FootballTeam();
 };
 

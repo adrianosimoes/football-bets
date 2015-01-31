@@ -67,19 +67,25 @@ int main(int argc, char **argv) {
 		string algorithm = Utils::configMap[string("algorithm")];
 
 		if (!algorithm.compare("football")) {
-			map<unsigned int, FootballLeague> leagues = DataLoad::analyseFolder(
-					Utils::configMap[string("dirCotacoes")]);
+			map<unsigned int, FootballLeague*> leagues =
+					DataLoad::analyseFolder(
+							Utils::configMap[string("dirCotacoes")]);
 			printf("Executing Football\n");
-			map<unsigned int, FootballLeague>::iterator i;
-			for (i = leagues.begin(); i != leagues.end(); i++) {
-				i->second.debugPrint();
-			}
-			printf("Poisson de 0 golos com media 1: %f. com media 2:%f",
-					Utils::poisson_pmf(1.5, 1), Utils::poisson_pmf(1.5, 2));
+			predictLeagues(leagues);
 		} else {
 			printf("Unknown Algorithm:%s\n", algorithm.c_str());
 		}
 
 	}
 	return EXIT_SUCCESS;
+}
+
+void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
+	map<unsigned int, FootballLeague*>::iterator i;
+	for (i = leagues.begin(); i != leagues.end(); i++) {
+		PredictLeaguePoisson plp = PredictLeaguePoisson(i->second);
+		plp.predict(0, 0);
+		plp.printResultsHDL();
+		plp.debugPrint();
+	}
 }

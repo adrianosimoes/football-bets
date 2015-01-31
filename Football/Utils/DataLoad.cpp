@@ -7,10 +7,10 @@
 
 #include "DataLoad.h"
 
-map<unsigned int, FootballLeague> DataLoad::analyseFolder(string dirName) {
+map<unsigned int, FootballLeague*> DataLoad::analyseFolder(string dirName) {
 	Utils::debugprint(string("Loading Dir: ").append(dirName));
 
-	map<unsigned int, FootballLeague> leagues;
+	map<unsigned int, FootballLeague*> leagues;
 
 	const char* dir = dirName.c_str();
 	DIR *dirPt = opendir(dir);
@@ -66,7 +66,7 @@ map<unsigned int, FootballLeague> DataLoad::analyseFolder(string dirName) {
 				// Inserts the market stock within the stock map which contains all market stocks.
 				if (strcmp(fileName, "^DJI.csv") != 0
 						&& strcmp(fileName, "^GSPC.csv") != 0) {
-					leagues[key] = *league;
+					leagues[key] = league;
 					cout << "Created " << league->getName() << " with key "
 							<< key << endl;
 					++key;

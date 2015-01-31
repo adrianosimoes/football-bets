@@ -5,8 +5,11 @@
  *      Author: Adriano
  */
 #include "Game.h"
+#include "Team.h"
 #include "../Utils/Utils.h"
 
+FootballGame::FootballGame() {
+}
 FootballGame::FootballGame(string matchDate, FootballTeam* homeTeam,
 		FootballTeam* awayTeam, int homeS, int awayS) :
 		date(matchDate), homeTeam(homeTeam), awayTeam(awayTeam), homeScore(
