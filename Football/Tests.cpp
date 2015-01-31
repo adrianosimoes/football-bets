@@ -9,7 +9,8 @@
 #include "Tests.hpp"
 #include "includes.h"
 #include "Model/Model.h"
-#include "Predict/PredictLeaguePoisson.h"
+#include "Predict/PredictLeague.h"
+#include "Predict/RatingCalculator.h"
 #include "Utils/Utils.h"
 
 bool compareDouble(double num1, double num2) {
@@ -21,7 +22,7 @@ bool compareDouble(double num1, double num2) {
 
 TEST_CASE("Debug ON") {
 	Utils::configMap[string("debug")] = ("true");
-	Utils::configMap[string("debugMath")] = ("true");
+	//Utils::configMap[string("debugMath")] = ("true");
 }
 
 TEST_CASE( "Matches", "" ) {
@@ -114,24 +115,53 @@ TEST_CASE( "Predict Game", "" ) {
 	FootballTeam *teamA = new FootballTeam("A");
 	FootballTeam *teamB = new FootballTeam("B");
 	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
-	PredictedGame* pred1 = new PredictedGame(game1, 5, 3, 50, 30, 20);
+	GameRating* pred1 = new GameRating(game1, 5, 3);
 
 	REQUIRE(game1->getHomeScore() == 2);
 	REQUIRE(game1->getAwayScore() == 1);
-	REQUIRE(pred1->getHomeAv() == 5);
-	REQUIRE(pred1->getAwayAv() == 3);
+	REQUIRE(pred1->getHomeRating() == 5);
+	REQUIRE(pred1->getAwayRating() == 3);
 	REQUIRE(pred1->isHomeWin());
 	REQUIRE(pred1->isDraw() == false);
 	REQUIRE(pred1->isAwayWin() == false);
 
-	PredictedGame* pred2 = new PredictedGame(game1, 1, 2, 20, 30, 50);
-	REQUIRE(pred2->getHomeAv() == 1);
-	REQUIRE(pred2->getAwayAv() == 2);
+	GameRating* pred2 = new GameRating(game1, 1, 2);
+	REQUIRE(pred2->getHomeRating() == 1);
+	REQUIRE(pred2->getAwayRating() == 2);
 	REQUIRE(pred2->isHomeWin() == false);
 	REQUIRE(pred2->isDraw() == false);
 	REQUIRE(pred2->isAwayWin());
-
 }
+
+TEST_CASE( "Game Rating", "" ) {
+	FootballTeam *teamA = new FootballTeam("A");
+	FootballTeam *teamB = new FootballTeam("B");
+	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
+	GameRating *gr = new GameRating(game1, 3.5, 4);
+	REQUIRE(gr->getHomeRating() == 3.5);
+	REQUIRE(gr->getAwayRating() == 4);
+}
+
+TEST_CASE( "Rating Calculator", "" ) {
+	FootballLeague league;
+	FootballTeam* teamA = league.getTeam("A");
+	FootballTeam* teamB = league.getTeam("B");
+	FootballTeam* teamC = league.getTeam("C");
+	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
+	FootballGame* game2 = new FootballGame("date", teamB, teamA, 2, 3);
+	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
+	league.addGame(game1);
+	league.addGame(game2);
+	RatingCalculator rc = RatingCalculator(&league);
+	rc.preditRatings();
+
+	GameRating* firstGame = rc.getRatings(game1);
+
+	REQUIRE(firstGame!=NULL);
+	REQUIRE(firstGame->getHomeRating() == 2);
+	REQUIRE(firstGame->getAwayRating() == 1);
+}
+
 TEST_CASE( "Predict Possion", "" ) {
 	FootballLeague league;
 	FootballTeam* teamA = league.getTeam("A");
@@ -142,35 +172,36 @@ TEST_CASE( "Predict Possion", "" ) {
 	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
 	league.addGame(game1);
 	league.addGame(game2);
-	PredictLeaguePoisson plp = PredictLeaguePoisson(&league);
-	plp.predict(0, 0);
-	vector<PredictedGame*>* predictedGames = plp.getPredictedGames();
+	PredictLeague pl = PredictLeague(&league,
+			RatingFactory::createPoissonRating(&league));
+	pl.predict(0, 0);
+	vector<GameRating*>* predictedGames = pl.getGameRatings();
 	ASSERT_BOOL(predictedGames->size() == 2);
 
-	PredictedGame* firstGame = (*predictedGames)[0];
+	GameRating* firstGame = (*predictedGames)[0];
 
-	REQUIRE(firstGame->getHomeAv() == 2);
-	REQUIRE(firstGame->getAwayAv() == 1);
+	REQUIRE(firstGame->getHomeRating() == 2);
+	REQUIRE(firstGame->getAwayRating() == 1);
 	REQUIRE(firstGame->isHomeWin());
 	ASSERT_BOOL(firstGame->isDraw() == false);
 	ASSERT_BOOL(firstGame->isAwayWin() == false);
 
-	PredictedGame* secondGame = (*predictedGames)[1];
+	GameRating* secondGame = (*predictedGames)[1];
 	secondGame->debugPrint();
-	REQUIRE(secondGame->getHomeAv() == 2);
-	REQUIRE(secondGame->getAwayAv() == 3);
+	REQUIRE(secondGame->getHomeRating() == 2);
+	REQUIRE(secondGame->getAwayRating() == 3);
 	REQUIRE(secondGame->isAwayWin());
 	ASSERT_BOOL(secondGame->isHomeWin() == false);
 	ASSERT_BOOL(secondGame->isDraw() == false);
 
 	league.addGame(game3);
-	plp.predict(0, 0);
-	predictedGames = plp.getPredictedGames();
+	pl.predict(0, 0);
+	predictedGames = pl.getGameRatings();
 	ASSERT_BOOL(predictedGames->size() == 3);
 
-	PredictedGame* thirdGame = (*predictedGames)[2];
-	REQUIRE(thirdGame->getHomeAv() == 2);
-	REQUIRE(thirdGame->getAwayAv() == 1.75);
+	GameRating* thirdGame = (*predictedGames)[2];
+	REQUIRE(thirdGame->getHomeRating() == 2);
+	REQUIRE(thirdGame->getAwayRating() == 1.75);
 	ASSERT_BOOL(thirdGame->isDraw() == false);
 	ASSERT_BOOL(thirdGame->isHomeWin());
 	ASSERT_BOOL(thirdGame->isAwayWin() == false);

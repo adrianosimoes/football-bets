@@ -10,9 +10,10 @@
 
 #include "includes.h"
 #include "Model/Game.h"
+#include "Predict/PredictLeague.h"
 #include "Utils/Utils.h"
-#include "Utils/DataLoad.h"
-#include "Predict/PredictLeaguePoisson.h"
+#include "Model/DataLoad.h"
+#include "Predict/RatingCalculator.h"
 
 
 void predictLeagues(map<unsigned int, FootballLeague*> leagues);

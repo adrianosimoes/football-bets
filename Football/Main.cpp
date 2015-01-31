@@ -83,7 +83,8 @@ int main(int argc, char **argv) {
 void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 	map<unsigned int, FootballLeague*>::iterator i;
 	for (i = leagues.begin(); i != leagues.end(); i++) {
-		PredictLeaguePoisson plp = PredictLeaguePoisson(i->second);
+		PredictLeague plp = PredictLeague(i->second,
+				RatingFactory::createPoissonRating(i->second));
 		plp.predict(0, 0);
 		plp.printResultsHDL();
 		plp.debugPrint();
