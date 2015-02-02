@@ -16,8 +16,6 @@ enum FootballResult {
 	HOME_WIN = 1, DRAW = 0, AWAY_WIN = 2,
 };
 
-#define MAX_NUMBER_GOALS_PREDICT 10
-
 class GameRating {
 protected:
 	FootballGame *game;
@@ -27,7 +25,7 @@ protected:
 	FootballResult predcitedResult;
 public:
 	GameRating(FootballGame* game, double homeRating, double awayRating);
-	void calculateGamePercentages();
+	void calculateGamePercentages(bool debugPrint);
 	double getHomeRating();
 	double getAwayRating();
 	bool isHomeWin();
@@ -42,6 +40,7 @@ protected:
 	map<FootballGame*, GameRating*> ratingsMap;
 	FootballLeague* league;
 	vector<GameRating*>* ratings;
+	GameRating* averageRating;
 public:
 	RatingCalculator(FootballLeague *league);
 	virtual void preditRatings();

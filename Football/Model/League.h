@@ -12,6 +12,9 @@
 #include "Game.h"
 #include "Team.h"
 
+#define MAX_NUMBER_GOALS_PREDICT 10
+#define PERC_PRECISION 100
+
 class FootballLeague {
 protected:
 	string name;
@@ -22,6 +25,7 @@ public:
 	FootballLeague();
 	void setName(string name);
 	string getName();
+	void printStats(bool debugPrint);
 	FootballTeam* getTeam(string name);
 	vector<FootballGame*>* getGames();
 	void addGame(FootballGame* game);

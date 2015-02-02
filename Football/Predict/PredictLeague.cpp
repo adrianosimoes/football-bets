@@ -7,12 +7,6 @@
 
 #include "PredictLeague.h"
 
-/*PredictLeaguePoisson::PredictLeaguePoisson(FootballLeague* league) :
- PredictLeague(league, ) {
- ratingCalc = new RatingCalculator(league);
- setRating(ratingCalc);
- }*/
-
 void PredictLeague::predict(int startRound, int roundBeforeEnd) {
 	delete ratingCalc;
 	setRating(new RatingCalculator(this->league));
@@ -42,6 +36,7 @@ void printStats(vector<FootballGame*>* games) {
 	}
 	printf("Real Results:\t%d%%\t%d%%\t%d%%\n", (home * 100) / allMatches,
 			(draw * 100) / allMatches, (away * 100) / allMatches);
+	printf("Number of games:\t%d\t%d\t%d\n", home, draw, away);
 }
 
 void printPredictedStats(vector<GameRating*>* games) {
@@ -63,7 +58,7 @@ void printPredictedStats(vector<GameRating*>* games) {
 
 void PredictLeague::printResultsHDL() {
 	printStats(league->getGames());
-	printPredictedStats(getGameRatings());
+	//printPredictedStats(getGameRatings());
 }
 
 void PredictLeague::debugPrint() {
@@ -81,4 +76,5 @@ PredictLeague::PredictLeague(FootballLeague* league, RatingCalculator* rc) :
 		league(league), ratingCalc(rc) {
 }
 
-PredictLeague::~PredictLeague(){}
+PredictLeague::~PredictLeague() {
+}

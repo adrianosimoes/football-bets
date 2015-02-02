@@ -48,6 +48,39 @@ void FootballLeague::addGame(FootballGame* game) {
 	games->push_back(game);
 }
 
+void FootballLeague::printStats(bool debugPrint) {
+	if (Utils::debugMathOn() || debugPrint) {
+		printf("League Data (games %ld):\n", games->size());
+	}
+
+	double goals[MAX_NUMBER_GOALS_PREDICT + 1][MAX_NUMBER_GOALS_PREDICT + 1] { 0 };
+
+	vector<double> homeGoals(MAX_NUMBER_GOALS_PREDICT + 1);
+	vector<double> awayGoals(MAX_NUMBER_GOALS_PREDICT + 1);
+	vector<FootballGame*>::iterator g;
+	for (g = games->begin(); g != games->end(); g++) {
+		goals[(*g)->getHomeScore()][(*g)->getAwayScore()]++;
+	}
+
+	for (int k = 0; k <= MAX_NUMBER_GOALS_PREDICT; k++) {
+		for (int m = 0; m <= MAX_NUMBER_GOALS_PREDICT; m++) {
+			goals[k][m] = goals[k][m] / games->size();
+		}
+	}
+
+	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
+		for (int j = 0; j <= MAX_NUMBER_GOALS_PREDICT; j++) {
+			if (Utils::debugMathOn() || debugPrint) {
+				printf("%d\t", (int) (goals[i][j] *
+				PERC_PRECISION * 100));
+			}
+		}
+		if (Utils::debugMathOn() || debugPrint) {
+			printf("\n");
+		}
+	}
+}
+
 void FootballLeague::debugPrint() {
 	if (!Utils::debugOn()) {
 		return;

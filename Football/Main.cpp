@@ -83,10 +83,12 @@ int main(int argc, char **argv) {
 void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 	map<unsigned int, FootballLeague*>::iterator i;
 	for (i = leagues.begin(); i != leagues.end(); i++) {
+		printf("League: %s\n", i->second->getName().c_str());
 		PredictLeague plp = PredictLeague(i->second,
 				RatingFactory::createPoissonRating(i->second));
 		plp.predict(0, 0);
 		plp.printResultsHDL();
-		plp.debugPrint();
+		(*i).second->printStats(true);
+		//plp.debugPrint();
 	}
 }
