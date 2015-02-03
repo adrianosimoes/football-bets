@@ -54,9 +54,6 @@ void FootballLeague::printStats(bool debugPrint) {
 	}
 
 	double goals[MAX_NUMBER_GOALS_PREDICT + 1][MAX_NUMBER_GOALS_PREDICT + 1] { 0 };
-
-	vector<double> homeGoals(MAX_NUMBER_GOALS_PREDICT + 1);
-	vector<double> awayGoals(MAX_NUMBER_GOALS_PREDICT + 1);
 	vector<FootballGame*>::iterator g;
 	for (g = games->begin(); g != games->end(); g++) {
 		goals[(*g)->getHomeScore()][(*g)->getAwayScore()]++;

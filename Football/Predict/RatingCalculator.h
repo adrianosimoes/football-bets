@@ -23,6 +23,7 @@ protected:
 	double awayRating;
 	int homePerc, drawPerc, awayPerc;
 	FootballResult predcitedResult;
+	vector<vector < double> >* goalsPerc;
 public:
 	GameRating(FootballGame* game, double homeRating, double awayRating);
 	void calculateGamePercentages(bool debugPrint);
@@ -32,6 +33,7 @@ public:
 	bool isDraw();
 	bool isAwayWin();
 	void debugPrint();
+	vector<vector < double> >* getGoalsPerc();
 
 };
 
@@ -48,6 +50,7 @@ public:
 	vector<GameRating*>* getGameRatings();
 	static int getPredictedGoals(double predictedAverage);
 	static double poisson_pmf(const double mean, const int value);
+	void printGamesGoalsPerc();
 	virtual ~RatingCalculator();
 };
 

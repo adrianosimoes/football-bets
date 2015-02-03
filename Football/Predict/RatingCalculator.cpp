@@ -10,6 +10,9 @@
 GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
 		game(game), homeRating(homeR), awayRating(awayR) {
 
+	goalsPerc = new vector<vector<double> >(MAX_NUMBER_GOALS_PREDICT + 1,
+			vector<double>(MAX_NUMBER_GOALS_PREDICT + 1, 0));
+
 	calculateGamePercentages(false);
 
 	if (homePerc >= awayPerc && homePerc >= drawPerc) {
@@ -36,6 +39,7 @@ void GameRating::calculateGamePercentages(bool debugPrint) {
 
 	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
 		for (int j = 0; j <= MAX_NUMBER_GOALS_PREDICT; j++) {
+			(*goalsPerc)[i][j] = homeGoalsPerc[i] * awayGoalsPerc[j] * 100;
 			if (Utils::debugMathOn() || debugPrint)
 				printf("%d\t", /*i, j,*/
 						(int) ((homeGoalsPerc[i] * awayGoalsPerc[j]
@@ -108,6 +112,10 @@ bool GameRating::isAwayWin() {
 	return predcitedResult == AWAY_WIN;
 }
 
+vector<vector<double> >* GameRating::getGoalsPerc() {
+	return goalsPerc;
+}
+
 void GameRating::debugPrint() {
 	if (!Utils::debugOn()) {
 		return;
@@ -174,13 +182,32 @@ void RatingCalculator::preditRatings() {
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);
 	}
-	averageLeagueHome = averageLeagueHome / league->getGames()->size();
-	averageLeagueAway = averageLeagueAway / league->getGames()->size();
-	FootballGame* averageGame = new FootballGame("", new FootballTeam("Home"),
-			new FootballTeam("Away"), 0, 0);
-	averageRating = new GameRating(averageGame, averageLeagueHome,
-			averageLeagueAway);
-	averageRating->calculateGamePercentages(true);
+	printGamesGoalsPerc();
+}
+
+void RatingCalculator::printGamesGoalsPerc() {
+	vector<vector<long double>> allGoals = vector<vector<long double> >(
+	MAX_NUMBER_GOALS_PREDICT + 1,
+			vector<long double>(MAX_NUMBER_GOALS_PREDICT + 1, 0));
+	vector<GameRating*>::iterator i;
+	for (i = ratings->begin(); i != ratings->end(); i++) {
+		vector<vector<double> >* gameGoals = (*i)->getGoalsPerc();
+		for (int j = 0; j <= MAX_NUMBER_GOALS_PREDICT; j++) {
+			for (int k = 0; k <= MAX_NUMBER_GOALS_PREDICT; k++) {
+				allGoals[j][k] += (*gameGoals)[j][k];
+			}
+		}
+	}
+	printf("Predicted Games Stats:\n");
+
+	for (int n = 0; n <= MAX_NUMBER_GOALS_PREDICT; n++) {
+		for (int m = 0; m <= MAX_NUMBER_GOALS_PREDICT; m++) {
+			printf("%Lf\t",
+					(allGoals[n][m] * PERC_PRECISION) / ratings->size());
+		}
+		printf("\n");
+	}
+
 }
 
 vector<GameRating*>* RatingCalculator::getGameRatings() {

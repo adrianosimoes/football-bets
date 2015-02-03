@@ -131,10 +131,11 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 		homeTeamGoals = atoi((char*) homeTeamScore.c_str());
 		awayTeamGoals = atoi((char*) awayTeamScore.c_str());
 
-		FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
-				homeTeamGoals, awayTeamGoals);
-
-		league->addGame(game);
+		if (homeTeamName.size() > 0) {
+			FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
+					homeTeamGoals, awayTeamGoals);
+			league->addGame(game);
+		}
 
 	}
 	newProcessing.close();
