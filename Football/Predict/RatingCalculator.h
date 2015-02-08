@@ -54,6 +54,7 @@ public:
 	vector<GameRating*>* getGameRatings();
 	static int getPredictedGoals(double predictedAverage);
 	static double poisson_pmf(const double mean, const int value);
+	void clearRatings();
 	void printGamesGoalsPerc();
 	virtual ~RatingCalculator();
 };

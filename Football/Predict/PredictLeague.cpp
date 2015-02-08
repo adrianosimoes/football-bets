@@ -8,13 +8,15 @@
 #include "PredictLeague.h"
 
 void PredictLeague::predict(int startRound, int roundBeforeEnd) {
-	delete ratingCalc;
-	setRating(new RatingCalculator(this->league));
 	ratingCalc->preditRatings(startRound, roundBeforeEnd);
 }
 
 GameRating* PredictLeague::getGameRating(FootballGame* game) {
 	return ratingCalc->getRatings(game);
+}
+
+FootballLeague* PredictLeague::getLeague() {
+	return league;
 }
 
 std::vector<GameRating*>* PredictLeague::getGameRatings() {
@@ -57,7 +59,7 @@ void printPredictedStats(vector<GameRating*>* games) {
 }
 
 void PredictLeague::printResultsHDL() {
-	printStats(league->getGames(0,0));
+	printStats(league->getGames(0, 0));
 	//printPredictedStats(getGameRatings());
 }
 

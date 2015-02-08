@@ -21,6 +21,7 @@ public:
 	virtual void predict(int startRound, int roundBeforeEnd);
 	//virtual void printPredictions();
 	vector<GameRating*>* getGameRatings();
+	FootballLeague* getLeague();
 	GameRating* getGameRating(FootballGame* game);
 	void printResultsHDL();
 	virtual void debugPrint();

@@ -92,8 +92,10 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		//(*i).second->printStats(true);
 		for (int j = 8; j <= 10; j++) {
 			HDAStrategy* strat = new HDAStrategy(plp, j);
-			strat->printGoodBets();
+			BackTrack* bt = new BackTrack(strat);
+			bt->run();
 			delete strat;
+			delete bt;
 		}
 		delete plp;
 	}

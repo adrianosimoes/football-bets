@@ -7,8 +7,19 @@
 
 #include "HDAStrategy.h"
 
+Strategy::Strategy(PredictLeague* pLeague) :
+		predictedLeague(pLeague) {
+}
+
+Strategy::~Strategy() {
+}
+
+PredictLeague* Strategy::getPredictLeague() {
+	return predictedLeague;
+}
+
 HDAStrategy::HDAStrategy(PredictLeague* pleague, int profitMargin) :
-		predictedLeague(pleague), profitMargin(profitMargin) {
+		Strategy(pleague), profitMargin(profitMargin) {
 	goodBets = new vector<Bet*>();
 	calculateBets();
 }

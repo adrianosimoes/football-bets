@@ -14,16 +14,28 @@
 
 class Bet;
 
-class HDAStrategy {
+class Strategy {
 protected:
 	vector<Bet*>* goodBets;
 	PredictLeague* predictedLeague;
+public:
+	Strategy(PredictLeague* league);
+	PredictLeague* getPredictLeague();
+	virtual void printGoodBets()=0;
+	/*void calculateBets();
+	 Bet* calculateBet(GameRating * rating);
+	 virtual void printGoodBets();*/
+	 virtual ~Strategy();
+};
+
+class HDAStrategy:  Strategy {
+protected:
 	int profitMargin;
 public:
 	HDAStrategy(PredictLeague* league, int profitMargin);
 	void calculateBets();
 	Bet* calculateBet(GameRating * rating);
-	virtual void printGoodBets();
+	void printGoodBets();
 	virtual ~HDAStrategy();
 };
 

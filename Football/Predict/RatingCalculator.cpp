@@ -175,9 +175,22 @@ RatingCalculator::RatingCalculator(FootballLeague* league) :
 	averageRating = NULL;
 }
 
+void RatingCalculator::clearRatings() {
+	vector<GameRating*>::iterator i;
+	for (i = ratings->begin(); i != ratings->end(); i++) {
+		delete *i;
+	}
+	ratingsMap.clear();
+	delete ratings;
+	delete averageRating;
+	ratings = new vector<GameRating*>();
+	averageRating = NULL;
+}
+
 void RatingCalculator::preditRatings(int startRound, int endRound) {
 	double averageLeagueHome;
 	double averageLeagueAway;
+	clearRatings();
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	vector<FootballGame*>::iterator i;
 
