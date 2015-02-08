@@ -102,18 +102,20 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 	getline(newProcessing, discardLine);
 
 	while (!newProcessing.eof()) {
-		string homeTeamName, awayTeamName, date, homeTeamScore, awayTeamScore;
+		string homeTeamName, awayTeamName, date, homeTeamScore, awayTeamScore,
+				homeOddsStr, drawOddsStr, awayOddsStr;
 		int homeTeamGoals, awayTeamGoals;
+		double homeOdds, drawOdds, awayOdds;
 		vector<string> fields(CSV_FIELDS);
-		string field, period, scannedLine;
+		string thisField, period, scannedLine;
 
 		getline(newProcessing, scannedLine);
 		stringstream iss(scannedLine);
 
 		// Process all the fields of each record
 		unsigned int w = 0;
-		while (getline(iss, field, ',')) {
-			fields[w++] = field;
+		while (getline(iss, thisField, ',')) {
+			fields[w++] = thisField;
 		}
 
 		stringstream sdate(fields[CSV_DATE]);
@@ -131,12 +133,20 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 		homeTeamGoals = atoi((char*) homeTeamScore.c_str());
 		awayTeamGoals = atoi((char*) awayTeamScore.c_str());
 
+		homeOddsStr = fields[CSV_HOME_TEAM_ODDS];
+		drawOddsStr = fields[CSV_DRAW_ODDS];
+		awayOddsStr = fields[CSV_AWAY_ODDS];
+
+		homeOdds = atof((char*) homeOddsStr.c_str());
+		drawOdds = atof((char*) drawOddsStr.c_str());
+		awayOdds = atof((char*) awayOddsStr.c_str());
+
 		if (homeTeamName.size() > 0) {
 			FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
 					homeTeamGoals, awayTeamGoals);
 			league->addGame(game);
+			game->setOdds(homeOdds, drawOdds, awayOdds);
 		}
-
 	}
 	newProcessing.close();
 

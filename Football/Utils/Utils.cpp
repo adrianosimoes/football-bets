@@ -16,6 +16,10 @@ void Utils::debugprint(string print) {
 	}
 }
 
+double Utils::getPercFromDecOdds(double decimalOdds) {
+	return 100 / decimalOdds;
+}
+
 void Utils::print(string print) {
 	printf("%s\n", print.c_str());
 }
@@ -27,5 +31,4 @@ bool Utils::debugOn() {
 bool Utils::debugMathOn() {
 	return !Utils::configMap[string("debugMath")].compare("true");
 }
-
 

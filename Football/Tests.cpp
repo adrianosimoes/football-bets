@@ -12,6 +12,7 @@
 #include "Predict/PredictLeague.h"
 #include "Predict/RatingCalculator.h"
 #include "Utils/Utils.h"
+#include "Predict/HDAStrategy.h"
 
 bool compareDouble(double num1, double num2) {
 	double diff = num1 - num2;
@@ -80,7 +81,7 @@ TEST_CASE( "League", "" ) {
 	FootballLeague league;
 	FootballTeam* teamA;
 	FootballTeam* teamB;
-	vector<FootballGame*>* games = league.getGames();
+	vector<FootballGame*>* games = league.getGames(0,0);
 
 	ASSERT_BOOL(games->size() == 0);
 
@@ -93,6 +94,7 @@ TEST_CASE( "League", "" ) {
 	REQUIRE(league.getTeam("A")->getID() == teamA->getID());
 
 	league.addGame(game1);
+	games = league.getGames(0,0);
 
 	REQUIRE(league.getTeam("A")->getID() == teamA->getID());
 
@@ -103,6 +105,7 @@ TEST_CASE( "League", "" ) {
 	REQUIRE(firstGame->getAwayTeam()->getID() == teamB->getID());
 
 	league.addGame(game2);
+	games = league.getGames(0,0);
 
 	ASSERT_BOOL(games->size() == 2);
 	FootballGame* secondGame = (*games)[1];
@@ -153,7 +156,7 @@ TEST_CASE( "Rating Calculator", "" ) {
 	league.addGame(game1);
 	league.addGame(game2);
 	RatingCalculator rc = RatingCalculator(&league);
-	rc.preditRatings();
+	rc.preditRatings(0,0);
 
 	GameRating* firstGame = rc.getRatings(game1);
 
@@ -205,4 +208,81 @@ TEST_CASE( "Predict Possion", "" ) {
 	ASSERT_BOOL(thirdGame->isDraw() == false);
 	ASSERT_BOOL(thirdGame->isHomeWin());
 	ASSERT_BOOL(thirdGame->isAwayWin() == false);
+}
+
+TEST_CASE( "Test Odds", "" ) {
+	FootballLeague league;
+	FootballTeam* teamA = league.getTeam("A");
+	FootballTeam* teamB = league.getTeam("B");
+	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
+	FootballGame* game2 = new FootballGame("date", teamB, teamA, 2, 3);
+	league.addGame(game1);
+	league.addGame(game2);
+	game1->setOdds(2.0, 3.0, 4.0);
+	game2->setOdds(7.0, 6.0, 5.0);
+
+	REQUIRE(compareDouble(game1->getHomeWinOdds(), 2.0));
+	REQUIRE(compareDouble(game1->getDrawOdds(), 3.0));
+	REQUIRE(compareDouble(game1->getAwayWinOdds(), 4.0));
+
+	REQUIRE(compareDouble(game2->getHomeWinOdds(), 7.0));
+	REQUIRE(compareDouble(game2->getDrawOdds(), 6.0));
+	REQUIRE(compareDouble(game2->getAwayWinOdds(), 5.0));
+}
+
+TEST_CASE( "Odds Conv", "" ) {
+	REQUIRE(compareDouble(Utils::getPercFromDecOdds(2), 50));
+	REQUIRE(compareDouble(Utils::getPercFromDecOdds(3), 33.333));
+	REQUIRE(compareDouble(Utils::getPercFromDecOdds(1.25), 80));
+	REQUIRE(compareDouble(Utils::getPercFromDecOdds(1.333), 75.019));
+	REQUIRE(compareDouble(Utils::getPercFromDecOdds(1.1), 90.91));
+}
+
+TEST_CASE( "Test Bet", "" ) {
+	FootballLeague league;
+	FootballTeam* teamA = league.getTeam("A");
+	FootballTeam* teamC = league.getTeam("C");
+	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
+
+	Bet* homeBet = new Bet(true, false, false, false, false, game3);
+	Bet* drawBet = new Bet(false, true, false, false, false, game3);
+	Bet* awayBet = new Bet(false, false, true, false, false, game3);
+
+	REQUIRE(homeBet->isHomeBet() == true);
+	REQUIRE(homeBet->isDrawBet() == false);
+	REQUIRE(homeBet->isAwayBet() == false);
+	REQUIRE(homeBet->getbetType() == 'H');
+
+	REQUIRE(drawBet->isHomeBet() == false);
+	REQUIRE(drawBet->isDrawBet() == true);
+	REQUIRE(drawBet->isAwayBet() == false);
+	REQUIRE(drawBet->getbetType() == 'D');
+
+	REQUIRE(awayBet->isHomeBet() == false);
+	REQUIRE(awayBet->isDrawBet() == false);
+	REQUIRE(awayBet->isAwayBet() == true);
+	REQUIRE(awayBet->getbetType() == 'A');
+}
+
+TEST_CASE( "Test Bet and Rating", "" ) {
+	FootballLeague league;
+	FootballTeam* teamA = league.getTeam("A");
+	FootballTeam* teamC = league.getTeam("C");
+	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
+
+	Bet* homeBet = new Bet(true, false, false, false, false, game3);
+	Bet* drawBet = new Bet(false, true, false, false, false, game3);
+	Bet* awayBet = new Bet(false, false, true, false, false, game3);
+
+	REQUIRE(homeBet->isHomeBet() == true);
+	REQUIRE(homeBet->isDrawBet() == false);
+	REQUIRE(homeBet->isAwayBet() == false);
+
+	REQUIRE(drawBet->isHomeBet() == false);
+	REQUIRE(drawBet->isDrawBet() == true);
+	REQUIRE(drawBet->isAwayBet() == false);
+
+	REQUIRE(awayBet->isHomeBet() == false);
+	REQUIRE(awayBet->isDrawBet() == false);
+	REQUIRE(awayBet->isAwayBet() == true);
 }

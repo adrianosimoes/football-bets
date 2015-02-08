@@ -10,7 +10,7 @@
 void PredictLeague::predict(int startRound, int roundBeforeEnd) {
 	delete ratingCalc;
 	setRating(new RatingCalculator(this->league));
-	ratingCalc->preditRatings();
+	ratingCalc->preditRatings(startRound, roundBeforeEnd);
 }
 
 GameRating* PredictLeague::getGameRating(FootballGame* game) {
@@ -57,7 +57,7 @@ void printPredictedStats(vector<GameRating*>* games) {
 }
 
 void PredictLeague::printResultsHDL() {
-	printStats(league->getGames());
+	printStats(league->getGames(0,0));
 	//printPredictedStats(getGameRatings());
 }
 

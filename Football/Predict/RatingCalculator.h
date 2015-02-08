@@ -23,9 +23,12 @@ protected:
 	double awayRating;
 	int homePerc, drawPerc, awayPerc;
 	FootballResult predcitedResult;
-	vector<vector < double> >* goalsPerc;
+	vector<vector<double> >* goalsPerc;
 public:
 	GameRating(FootballGame* game, double homeRating, double awayRating);
+	int getHomeWinPerc();
+	int getDrawPerc();
+	int getAwayWinPerc();
 	void calculateGamePercentages(bool debugPrint);
 	double getHomeRating();
 	double getAwayRating();
@@ -33,7 +36,8 @@ public:
 	bool isDraw();
 	bool isAwayWin();
 	void debugPrint();
-	vector<vector < double> >* getGoalsPerc();
+	FootballGame* getOriginalGame();
+	vector<vector<double> >* getGoalsPerc();
 
 };
 
@@ -45,7 +49,7 @@ protected:
 	GameRating* averageRating;
 public:
 	RatingCalculator(FootballLeague *league);
-	virtual void preditRatings();
+	virtual void preditRatings(int startRound, int endRound);
 	GameRating* getRatings(FootballGame* game);
 	vector<GameRating*>* getGameRatings();
 	static int getPredictedGoals(double predictedAverage);

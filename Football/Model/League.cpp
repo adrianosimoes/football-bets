@@ -38,8 +38,14 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 		return addTeam(teamName);
 }
 
-vector<FootballGame*>* FootballLeague::getGames() {
-	return games;
+vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRoundFromEnd) {
+	int gamesPerRound = teams.size() / 2;
+	vector<FootballGame*>::const_iterator first = games->begin()
+			+ (gamesPerRound * startRound);
+	vector<FootballGame*>::const_iterator last = games->end()
+			- (gamesPerRound * lastRoundFromEnd);
+	vector<FootballGame*>* newVec = new  vector<FootballGame*>(first, last);
+	return newVec;
 }
 
 void FootballLeague::addGame(FootballGame* game) {

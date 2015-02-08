@@ -23,6 +23,18 @@ GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
 		predcitedResult = AWAY_WIN;
 }
 
+int GameRating::getHomeWinPerc() {
+	return homePerc;
+}
+
+int GameRating::getDrawPerc() {
+	return drawPerc;
+}
+
+int GameRating::getAwayWinPerc() {
+	return awayPerc;
+}
+
 void GameRating::calculateGamePercentages(bool debugPrint) {
 	vector<double> homeGoalsPerc(MAX_NUMBER_GOALS_PREDICT + 1);
 	vector<double> awayGoalsPerc(MAX_NUMBER_GOALS_PREDICT + 1);
@@ -116,6 +128,10 @@ vector<vector<double> >* GameRating::getGoalsPerc() {
 	return goalsPerc;
 }
 
+FootballGame* GameRating::getOriginalGame() {
+	return game;
+}
+
 void GameRating::debugPrint() {
 	if (!Utils::debugOn()) {
 		return;
@@ -159,11 +175,13 @@ RatingCalculator::RatingCalculator(FootballLeague* league) :
 	averageRating = NULL;
 }
 
-void RatingCalculator::preditRatings() {
+void RatingCalculator::preditRatings(int startRound, int endRound) {
 	double averageLeagueHome;
 	double averageLeagueAway;
+	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	vector<FootballGame*>::iterator i;
-	for (i = league->getGames()->begin(); i != league->getGames()->end(); i++) {
+
+	for (i = games->begin(); i != games->end(); i++) {
 		FootballGame* game = *i;
 
 		FootballTeam* homeTeam = game->getHomeTeam();
@@ -197,6 +215,9 @@ void RatingCalculator::printGamesGoalsPerc() {
 				allGoals[j][k] += (*gameGoals)[j][k];
 			}
 		}
+	}
+	if (!Utils::debugOn()) {
+		return;
 	}
 	printf("Predicted Games Stats:\n");
 

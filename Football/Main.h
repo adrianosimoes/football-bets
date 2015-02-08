@@ -14,6 +14,7 @@
 #include "Utils/Utils.h"
 #include "Model/DataLoad.h"
 #include "Predict/RatingCalculator.h"
+#include "Predict/HDAStrategy.h"
 
 
 void predictLeagues(map<unsigned int, FootballLeague*> leagues);

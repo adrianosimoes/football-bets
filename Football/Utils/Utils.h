@@ -18,6 +18,7 @@ public:
 	static void print(string print);
 	static void debugprint(string print);
 	static double poisson_pmf(const double mean, const int x);
+	static double getPercFromDecOdds(double odds);
 };
 
 #endif /* UTILS_UTILS_H_ */

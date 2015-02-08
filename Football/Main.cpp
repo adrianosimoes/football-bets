@@ -84,11 +84,17 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 	map<unsigned int, FootballLeague*>::iterator i;
 	for (i = leagues.begin(); i != leagues.end(); i++) {
 		printf("League: %s\n", i->second->getName().c_str());
-		PredictLeague plp = PredictLeague(i->second,
+		PredictLeague *plp = new PredictLeague(i->second,
 				RatingFactory::createPoissonRating(i->second));
-		plp.predict(0, 0);
-		plp.printResultsHDL();
-		(*i).second->printStats(true);
-		//plp.debugPrint();
+		//i->second->debugPrint();
+		plp->predict(5, 0);
+		//plp->printResultsHDL();
+		//(*i).second->printStats(true);
+		for (int j = 8; j <= 10; j++) {
+			HDAStrategy* strat = new HDAStrategy(plp, j);
+			strat->printGoodBets();
+			delete strat;
+		}
+		delete plp;
 	}
 }

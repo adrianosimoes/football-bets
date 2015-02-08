@@ -16,12 +16,16 @@ protected:
 	string date;
 	FootballTeam* homeTeam, *awayTeam;
 	int homeScore, awayScore;
+	double homeOdds,drawOdds,awayOdds;
 public:
-	FootballGame();
 	FootballGame(string date, FootballTeam* homeTeam, FootballTeam* awayTeam,
 			int homeScore, int awayScore);
+	void setOdds(double homeOdds,double drawOdds,double awayOdds);
 	FootballTeam* getHomeTeam();
 	FootballTeam* getAwayTeam();
+	double getHomeWinOdds();
+	double getDrawOdds();
+	double getAwayWinOdds();
 	virtual int getHomeScore();
 	virtual int getAwayScore();
 	virtual bool isHomeWin();

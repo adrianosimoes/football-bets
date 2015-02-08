@@ -27,7 +27,7 @@ public:
 	string getName();
 	void printStats(bool debugPrint);
 	FootballTeam* getTeam(string name);
-	vector<FootballGame*>* getGames();
+	vector<FootballGame*>* getGames(int startRound, int lastRoundFromEnd);
 	void addGame(FootballGame* game);
 	void debugPrint();
 	virtual ~FootballLeague();

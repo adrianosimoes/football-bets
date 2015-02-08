@@ -21,6 +21,9 @@
 #define CSV_AWAY_TEAM_NAME 3
 #define CSV_HOME_TEAM_SCORE 4
 #define CSV_AWAY_TEAM_SCORE 5
+#define CSV_HOME_TEAM_ODDS 23
+#define CSV_DRAW_ODDS CSV_HOME_TEAM_ODDS+1
+#define CSV_AWAY_ODDS CSV_HOME_TEAM_ODDS+2
 
 class DataLoad {
 public:
