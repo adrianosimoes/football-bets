@@ -21,7 +21,7 @@ PredictLeague* Strategy::getPredictLeague() {
 HDAStrategy::HDAStrategy(PredictLeague* pleague, int profitMargin) :
 		Strategy(pleague), profitMargin(profitMargin) {
 	goodBets = new vector<Bet*>();
-	calculateBets();
+	//calculateBets();
 }
 
 Bet::Bet(bool homeWin, bool draw, bool awayWin, bool over25, bool under25,
@@ -64,7 +64,16 @@ char Bet::getbetType() {
 	return betType;
 }
 
+void HDAStrategy::cleanBets() {
+	vector<Bet*>::iterator i;
+	for (i = goodBets->begin(); i != goodBets->end(); i++) {
+		delete *i;
+	}
+	goodBets->clear();
+}
+
 void HDAStrategy::calculateBets() {
+	cleanBets();
 	vector<GameRating*>::iterator i;
 	for (i = predictedLeague->getGameRatings()->begin();
 			i != predictedLeague->getGameRatings()->end(); i++) {
@@ -102,7 +111,7 @@ Bet* HDAStrategy::calculateBet(GameRating * rating) {
 	return NULL;
 }
 
-void HDAStrategy::printGoodBets() {
+void HDAStrategy::printBets() {
 	vector<Bet*>::iterator i;
 	double money = 0, gamesWin = 0, sumOdds = 0;
 	printf("Good Bets(%d)  \n", profitMargin);

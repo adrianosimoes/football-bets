@@ -188,8 +188,6 @@ void RatingCalculator::clearRatings() {
 }
 
 void RatingCalculator::preditRatings(int startRound, int endRound) {
-	double averageLeagueHome;
-	double averageLeagueAway;
 	clearRatings();
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	vector<FootballGame*>::iterator i;
@@ -206,8 +204,8 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 
 		double predictedHomeAverage = (homeAttack + awayDefense) / 2;
 		double predictedAwayAverage = (awayAttack + homeDefense) / 2;
-		averageLeagueHome += homeTeam->getHomeScoreRating();
-		averageLeagueAway += awayTeam->getAwayScoreRating();
+		//averageLeagueHome += homeTeam->getHomeScoreRating();
+		//averageLeagueAway += awayTeam->getAwayScoreRating();
 		GameRating * gameRating = new GameRating(game, predictedHomeAverage,
 				predictedAwayAverage);
 		ratingsMap[game] = gameRating;

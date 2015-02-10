@@ -71,7 +71,12 @@ int main(int argc, char **argv) {
 					DataLoad::analyseFolder(
 							Utils::configMap[string("dirCotacoes")]);
 			printf("Executing Football\n");
-			predictLeagues(leagues);
+			try {
+				predictLeagues(leagues);
+			} catch (exception& e) {
+				cout << e.what() << '\n';
+			}
+
 		} else {
 			printf("Unknown Algorithm:%s\n", algorithm.c_str());
 		}
@@ -87,7 +92,7 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		PredictLeague *plp = new PredictLeague(i->second,
 				RatingFactory::createPoissonRating(i->second));
 		//i->second->debugPrint();
-		plp->predict(5, 0);
+		//plp->predict(5, 6);
 		//plp->printResultsHDL();
 		//(*i).second->printStats(true);
 		for (int j = 8; j <= 10; j++) {

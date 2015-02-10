@@ -13,12 +13,15 @@ BackTrack::BackTrack(Strategy* strategy) :
 
 void BackTrack::run() {
 	PredictLeague* pLeague = strategy->getPredictLeague();
-	//FootballLeague* league = pLeague->getLeague();
-	pLeague->predict(5, 0);
-	strategy->printGoodBets();
+	FootballLeague* league = pLeague->getLeague();
+	for (int i = 5; i < league->getLastRound(); i++) {
+		pLeague->predict(i, i+1);
+		strategy->calculateBets();
+		strategy->printGoodBets();
+	}
 
 }
 BackTrack::~BackTrack() {
-	// TODO Auto-generated destructor stub
+// TODO Auto-generated destructor stub
 }
 

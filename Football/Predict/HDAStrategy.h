@@ -21,21 +21,23 @@ protected:
 public:
 	Strategy(PredictLeague* league);
 	PredictLeague* getPredictLeague();
-	virtual void printGoodBets()=0;
+	virtual void printBets()=0;
+	virtual void calculateBets()=0;
 	/*void calculateBets();
 	 Bet* calculateBet(GameRating * rating);
 	 virtual void printGoodBets();*/
-	 virtual ~Strategy();
+	virtual ~Strategy()=0;
 };
 
-class HDAStrategy:  Strategy {
+class HDAStrategy: public Strategy {
 protected:
 	int profitMargin;
 public:
 	HDAStrategy(PredictLeague* league, int profitMargin);
 	void calculateBets();
+	void cleanBets();
 	Bet* calculateBet(GameRating * rating);
-	void printGoodBets();
+	void printBets();
 	virtual ~HDAStrategy();
 };
 

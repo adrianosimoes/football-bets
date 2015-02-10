@@ -9,6 +9,7 @@
 
 #include "../Utils/Utils.h"
 
+
 FootballLeague::FootballLeague() {
 	games = new vector<FootballGame*>();
 	teams = map<string, FootballTeam*>();
@@ -38,13 +39,29 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 		return addTeam(teamName);
 }
 
-vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRoundFromEnd) {
+int FootballLeague::getLastRound() {
+	int gamesPerRound = teams.size() / 2;
+	return games->size() / gamesPerRound;
+}
+
+vector<FootballGame*>* FootballLeague::getAllGames() {
+	return games;
+}
+
+vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRound) {
+	if (startRound > lastRound) {
+		throw std::invalid_argument("FootballLeague::getGames() - Start round is bigger then last round.");
+	}
+
 	int gamesPerRound = teams.size() / 2;
 	vector<FootballGame*>::const_iterator first = games->begin()
 			+ (gamesPerRound * startRound);
-	vector<FootballGame*>::const_iterator last = games->end()
-			- (gamesPerRound * lastRoundFromEnd);
-	vector<FootballGame*>* newVec = new  vector<FootballGame*>(first, last);
+	if (lastRound > getLastRound()) {
+		lastRound = getLastRound();
+	}
+	vector<FootballGame*>::const_iterator last = games->begin()
+			+ (gamesPerRound * lastRound);
+	vector<FootballGame*>* newVec = new vector<FootballGame*>(first, last);
 	return newVec;
 }
 

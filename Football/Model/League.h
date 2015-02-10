@@ -15,6 +15,12 @@
 #define MAX_NUMBER_GOALS_PREDICT 10
 #define PERC_PRECISION 100
 
+/*class RoundException: public exception {
+	virtual const char* what() const throw () {
+		return "FootballLeague::getGames() - Start round is bigger then last round.";
+	}
+} roundExcp;*/
+
 class FootballLeague {
 protected:
 	string name;
@@ -27,9 +33,11 @@ public:
 	string getName();
 	void printStats(bool debugPrint);
 	FootballTeam* getTeam(string name);
-	vector<FootballGame*>* getGames(int startRound, int lastRoundFromEnd);
+	vector<FootballGame*>* getGames(int startRound, int lastRound);
+	vector<FootballGame*>* getAllGames();
 	void addGame(FootballGame* game);
 	void debugPrint();
+	int getLastRound();
 	virtual ~FootballLeague();
 };
 
