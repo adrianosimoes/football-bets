@@ -14,11 +14,11 @@ BackTrack::BackTrack(Strategy* strategy) :
 void BackTrack::run() {
 	PredictLeague* pLeague = strategy->getPredictLeague();
 	FootballLeague* league = pLeague->getLeague();
-	for (int i = 5; i < league->getLastRound(); i++) {
-		pLeague->predict(i, i+1);
+	//for (int i = 5; i < league->getLastRound(); i++) {
+		pLeague->predict(5, league->getLastRound());
 		strategy->calculateBets();
-		strategy->printGoodBets();
-	}
+		strategy->printBets();
+	//}
 
 }
 BackTrack::~BackTrack() {
