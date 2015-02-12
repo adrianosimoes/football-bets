@@ -10,6 +10,7 @@
 Strategy::Strategy(PredictLeague* pLeague) :
 		predictedLeague(pLeague) {
 	goodBets = new vector<Bet*>();
+	winMoney = 0, succBets = 0, sumOdds = 0;
 }
 
 Strategy::~Strategy() {
