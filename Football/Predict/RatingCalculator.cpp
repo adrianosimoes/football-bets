@@ -212,6 +212,7 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 		ratings->push_back(gameRating);
 	}
 	printGamesGoalsPerc();
+	delete games;
 }
 
 void RatingCalculator::printGamesGoalsPerc() {

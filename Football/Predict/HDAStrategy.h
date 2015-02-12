@@ -16,6 +16,7 @@ class Bet;
 
 class Strategy {
 protected:
+	double winMoney,succBets,sumOdds;
 	vector<Bet*>* goodBets;
 	PredictLeague* predictedLeague;
 public:
@@ -23,6 +24,10 @@ public:
 	PredictLeague* getPredictLeague();
 	virtual void printBets()=0;
 	virtual void calculateBets()=0;
+	double getWinMoney();
+	double getSuccBets();
+	double getSumOdds();
+	int getTotalBetsMade();
 	/*void calculateBets();
 	 Bet* calculateBet(GameRating * rating);
 	 virtual void printGoodBets();*/

@@ -104,4 +104,5 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		}
 		delete plp;
 	}
+	printf("Finished\n");
 }

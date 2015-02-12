@@ -14,11 +14,24 @@ BackTrack::BackTrack(Strategy* strategy) :
 void BackTrack::run() {
 	PredictLeague* pLeague = strategy->getPredictLeague();
 	FootballLeague* league = pLeague->getLeague();
-	//for (int i = 5; i < league->getLastRound(); i++) {
-		pLeague->predict(5, league->getLastRound());
+	double winMoney = 0, gamesWin = 0, sumOdds = 0;
+	int betsMade = 0;
+
+	for (int i = 5; i < league->getLastRound(); i++) {
+		pLeague->predict(i, i+1);
+		//pLeague->debugPrint();
 		strategy->calculateBets();
-		strategy->printBets();
-	//}
+		winMoney += strategy->getWinMoney();
+		gamesWin += strategy->getSuccBets();
+		sumOdds += strategy->getSumOdds();
+		betsMade += strategy->getTotalBetsMade();
+		//strategy->printBets();
+	}
+	printf(
+			"Winnings: %f Perc Wins: %f. Average Odd: %f. Win per Bet: %f. Bets: %d\n",
+			winMoney, betsMade > 0 ? gamesWin / betsMade : 0,
+			gamesWin > 0 ? sumOdds / gamesWin : 0,
+			betsMade > 0 ? winMoney / betsMade : 0, betsMade);
 
 }
 BackTrack::~BackTrack() {
