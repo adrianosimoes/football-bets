@@ -7,6 +7,10 @@
 
 #include "RatingCalculator.h"
 
+TeamRating::TeamRating(FootballTeam* team) :
+		FootballTeam(*team) {
+}
+
 GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
 		game(game), homeRating(homeR), awayRating(awayR) {
 
@@ -173,34 +177,62 @@ RatingCalculator::RatingCalculator(FootballLeague* league) :
 	ratingsMap = map<FootballGame*, GameRating*>();
 	ratings = new vector<GameRating*>();
 	averageRating = NULL;
+	teamRatings = map<FootballTeam*, TeamRating*>();
 }
 
 void RatingCalculator::clearRatings() {
 	vector<GameRating*>::iterator i;
+	map<FootballTeam*, TeamRating*>::iterator j;
 	for (i = ratings->begin(); i != ratings->end(); i++) {
 		delete *i;
 	}
+	for (j = teamRatings.begin(); j != teamRatings.end(); j++) {
+		delete (*j).second;
+	}
+	teamRatings.clear();
 	ratingsMap.clear();
-	delete ratings;
+	ratings->clear();
 	delete averageRating;
-	ratings = new vector<GameRating*>();
 	averageRating = NULL;
+}
+
+TeamRating* RatingCalculator::getTeamRating(FootballTeam* team) {
+	TeamRating* teamRating = teamRatings[team];
+	if (teamRating == NULL) {
+		teamRating = new TeamRating(team);
+		teamRatings[team] = teamRating;
+	}
+	return teamRating;
+}
+
+void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
+	vector<FootballGame*>* games = league->getGames(startRound, endRound);
+	vector<FootballGame*>::iterator i;
+
+	for (i = games->begin(); i != games->end(); i++) {
+		TeamRating* homeRating = getTeamRating((*i)->getHomeTeam());
+		TeamRating* awayRating = getTeamRating((*i)->getAwayTeam());
+		homeRating->addGame(*i);
+		awayRating->addGame(*i);
+	}
+
 }
 
 void RatingCalculator::preditRatings(int startRound, int endRound) {
 	clearRatings();
+	calculateTeamRatings(1, startRound - 1);
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	vector<FootballGame*>::iterator i;
 
 	for (i = games->begin(); i != games->end(); i++) {
 		FootballGame* game = *i;
 
-		FootballTeam* homeTeam = game->getHomeTeam();
-		FootballTeam* awayTeam = game->getAwayTeam();
-		double homeAttack = homeTeam->getHomeScoreRating(), awayAttack =
-				awayTeam->getAwayScoreRating(), homeDefense =
-				homeTeam->getHomeDefenseRating(), awayDefense =
-				awayTeam->getAwayDefenseRating();
+		TeamRating* homeRating = getTeamRating(game->getHomeTeam());
+		TeamRating* awayRating = getTeamRating(game->getAwayTeam());
+		double homeAttack = homeRating->getHomeScoreRating();
+		double awayAttack = awayRating->getAwayScoreRating();
+		double homeDefense = homeRating->getHomeDefenseRating();
+		double awayDefense = awayRating->getAwayDefenseRating();
 
 		double predictedHomeAverage = (homeAttack + awayDefense) / 2;
 		double predictedAwayAverage = (awayAttack + homeDefense) / 2;

@@ -41,7 +41,7 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 
 int FootballLeague::getLastRound() {
 	int gamesPerRound = teams.size() / 2;
-	return games->size() / gamesPerRound;
+	return (games->size() / gamesPerRound)+1;
 }
 
 vector<FootballGame*>* FootballLeague::getAllGames() {
@@ -49,6 +49,8 @@ vector<FootballGame*>* FootballLeague::getAllGames() {
 }
 
 vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRound) {
+	startRound=startRound-1;
+	lastRound=lastRound-1;
 	if (startRound > lastRound) {
 		throw std::invalid_argument("FootballLeague::getGames() - Start round is bigger then last round.");
 	}

@@ -151,14 +151,18 @@ TEST_CASE( "Rating Calculator", "" ) {
 	FootballTeam* teamB = league.getTeam("B");
 	FootballTeam* teamC = league.getTeam("C");
 	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
+	FootballGame* game1b = new FootballGame("date", teamA, teamB, 2, 1);
 	FootballGame* game2 = new FootballGame("date", teamB, teamA, 2, 3);
+	FootballGame* game2b = new FootballGame("date", teamB, teamA, 2, 3);
 	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
 	league.addGame(game1);
 	league.addGame(game2);
+	league.addGame(game1b);
+	league.addGame(game2b);
 	RatingCalculator rc = RatingCalculator(&league);
-	rc.preditRatings(0,league.getLastRound());
+	rc.preditRatings(2, league.getLastRound());
 
-	GameRating* firstGame = rc.getRatings(game1);
+	GameRating* firstGame = rc.getRatings(game1b);
 
 	REQUIRE(firstGame!=NULL);
 	REQUIRE(firstGame->getHomeRating() == 2);
@@ -171,15 +175,22 @@ TEST_CASE( "Predict Possion", "" ) {
 	FootballTeam* teamB = league.getTeam("B");
 	FootballTeam* teamC = league.getTeam("C");
 	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
+	FootballGame* game1b = new FootballGame("date", teamA, teamB, 2, 1);
 	FootballGame* game2 = new FootballGame("date", teamB, teamA, 2, 3);
+	FootballGame* game2b = new FootballGame("date", teamB, teamA, 2, 3);
 	FootballGame* game3 = new FootballGame("date", teamA, teamC, 2, 2);
+	FootballGame* game3b = new FootballGame("date", teamA, teamC, 2, 2);
+	FootballGame* game4 = new FootballGame("date", teamB, teamC, 2, 2);
+	FootballGame* game4b = new FootballGame("date", teamB, teamC, 2, 2);
 	league.addGame(game1);
+	league.addGame(game1b);
 	league.addGame(game2);
+	league.addGame(game2b);
 	PredictLeague pl = PredictLeague(&league,
 			RatingFactory::createPoissonRating(&league));
-	pl.predict(0, league.getLastRound());
+	pl.predict(2, league.getLastRound());
 	vector<GameRating*>* predictedGames = pl.getGameRatings();
-	ASSERT_BOOL(predictedGames->size() == 2);
+	ASSERT_BOOL(predictedGames->size() == 3);
 
 	GameRating* firstGame = (*predictedGames)[0];
 
@@ -198,11 +209,14 @@ TEST_CASE( "Predict Possion", "" ) {
 	ASSERT_BOOL(secondGame->isDraw() == false);
 
 	league.addGame(game3);
-	pl.predict(0, league.getLastRound());
+	league.addGame(game3b);
+	league.addGame(game4);
+	league.addGame(game4b);
+	pl.predict(2, league.getLastRound());
 	predictedGames = pl.getGameRatings();
-	ASSERT_BOOL(predictedGames->size() == 3);
+	ASSERT_BOOL(predictedGames->size() == 7);
 
-	GameRating* thirdGame = (*predictedGames)[2];
+	GameRating* thirdGame = (*predictedGames)[3];
 	REQUIRE(thirdGame->getHomeRating() == 2);
 	REQUIRE(thirdGame->getAwayRating() == 1.75);
 	ASSERT_BOOL(thirdGame->isDraw() == false);

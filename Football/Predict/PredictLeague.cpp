@@ -59,7 +59,7 @@ void printPredictedStats(vector<GameRating*>* games) {
 }
 
 void PredictLeague::printResultsHDL() {
-	printStats(league->getGames(0, 0));
+	printStats(league->getGames(1, league->getLastRound()));
 	//printPredictedStats(getGameRatings());
 }
 

@@ -16,6 +16,11 @@ enum FootballResult {
 	HOME_WIN = 1, DRAW = 0, AWAY_WIN = 2,
 };
 
+class TeamRating: public FootballTeam {
+public:
+	TeamRating(FootballTeam* team);
+};
+
 class GameRating {
 protected:
 	FootballGame *game;
@@ -44,12 +49,15 @@ public:
 class RatingCalculator {
 protected:
 	map<FootballGame*, GameRating*> ratingsMap;
+	map<FootballTeam*, TeamRating*> teamRatings;
 	FootballLeague* league;
 	vector<GameRating*>* ratings;
 	GameRating* averageRating;
 public:
 	RatingCalculator(FootballLeague *league);
 	virtual void preditRatings(int startRound, int endRound);
+	void calculateTeamRatings(int startRound, int endRound);
+	TeamRating* getTeamRating(FootballTeam* team);
 	GameRating* getRatings(FootballGame* game);
 	vector<GameRating*>* getGameRatings();
 	static int getPredictedGoals(double predictedAverage);
