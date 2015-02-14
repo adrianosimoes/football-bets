@@ -17,7 +17,7 @@ void BackTrack::run() {
 	double winMoney = 0, gamesWin = 0, sumOdds = 0;
 	int betsMade = 0;
 
-	for (int i = 6; i < league->getLastRound(); i++) {
+	for (int i = 5; i < league->getLastRound(); i++) {
 		pLeague->predict(i, i+1);
 		//pLeague->debugPrint();
 		strategy->calculateBets();

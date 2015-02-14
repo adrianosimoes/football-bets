@@ -9,7 +9,6 @@
 
 #include "../Utils/Utils.h"
 
-
 FootballLeague::FootballLeague() {
 	games = new vector<FootballGame*>();
 	teams = map<string, FootballTeam*>();
@@ -41,7 +40,7 @@ FootballTeam* FootballLeague::getTeam(string teamName) {
 
 int FootballLeague::getLastRound() {
 	int gamesPerRound = teams.size() / 2;
-	return (games->size() / gamesPerRound)+1;
+	return (games->size() / gamesPerRound) + 1;
 }
 
 vector<FootballGame*>* FootballLeague::getAllGames() {
@@ -49,20 +48,22 @@ vector<FootballGame*>* FootballLeague::getAllGames() {
 }
 
 vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRound) {
-	startRound=startRound-1;
-	lastRound=lastRound-1;
+	startRound = startRound - 1;
+	lastRound = lastRound - 1;
 	if (startRound > lastRound) {
-		throw std::invalid_argument("FootballLeague::getGames() - Start round is bigger then last round.");
+		throw std::invalid_argument(
+				"FootballLeague::getGames() - Start round is bigger then last round.");
 	}
 
 	int gamesPerRound = teams.size() / 2;
 	vector<FootballGame*>::const_iterator first = games->begin()
 			+ (gamesPerRound * startRound);
-	if (lastRound > getLastRound()) {
-		lastRound = getLastRound();
+	vector<FootballGame*>::const_iterator last;
+	if (lastRound + 1 >= getLastRound()) {
+		last = games->end();
+	} else {
+		last = games->begin() + (gamesPerRound * lastRound);
 	}
-	vector<FootballGame*>::const_iterator last = games->begin()
-			+ (gamesPerRound * lastRound);
 	vector<FootballGame*>* newVec = new vector<FootballGame*>(first, last);
 	return newVec;
 }
