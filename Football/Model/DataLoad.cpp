@@ -80,6 +80,7 @@ map<unsigned int, FootballLeague*> DataLoad::analyseFolder(string dirName) {
 	return leagues;
 }
 
+//Reads data from the following website format: http://www.football-data.co.uk
 void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 	string temp(filename);
 
@@ -96,11 +97,21 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 	newProcessing.seekg(ios::beg);
 
 // Discarding the first line of the file
+	int homeTeamOddsField = -1;
 	ifstream file(temp.c_str());
 
-	string discardLine;
-	getline(newProcessing, discardLine);
-
+	string headerLine;
+	getline(newProcessing, headerLine);
+	stringstream headerLiness(headerLine);
+	string fieldHeader;
+	// Process all the Header fields
+	int count = 0;
+	while (getline(headerLiness, fieldHeader, ',')) {
+		if (fieldHeader.compare(string(CSV_HOME_TEAM_ODDS_HEADER)) == 0) {
+			homeTeamOddsField = count;
+		}
+		count++;
+	}
 	while (!newProcessing.eof()) {
 		string homeTeamName, awayTeamName, date, homeTeamScore, awayTeamScore,
 				homeOddsStr, drawOddsStr, awayOddsStr;
@@ -133,9 +144,9 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 		homeTeamGoals = atoi((char*) homeTeamScore.c_str());
 		awayTeamGoals = atoi((char*) awayTeamScore.c_str());
 
-		homeOddsStr = fields[CSV_HOME_TEAM_ODDS];
-		drawOddsStr = fields[CSV_DRAW_ODDS];
-		awayOddsStr = fields[CSV_AWAY_ODDS];
+		homeOddsStr = fields[homeTeamOddsField];
+		drawOddsStr = fields[homeTeamOddsField + 1];
+		awayOddsStr = fields[homeTeamOddsField + 2];
 
 		homeOdds = atof((char*) homeOddsStr.c_str());
 		drawOdds = atof((char*) drawOddsStr.c_str());
