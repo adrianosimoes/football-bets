@@ -18,6 +18,7 @@ protected:
 	string name;
 	vector<FootballGame*> games;
 	int homeGoals,awayGoals,homeConceded,awayConceded, homeMatches,awayMatches;
+	FootballTeam(string name, int id);
 public:
 	FootballTeam(string name);
 	string getName();

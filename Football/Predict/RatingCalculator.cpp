@@ -7,8 +7,7 @@
 
 #include "RatingCalculator.h"
 
-TeamRating::TeamRating(FootballTeam* team) :
-		FootballTeam(*team) {
+TeamRating::TeamRating(FootballTeam* team) : FootballTeam(team->getName(),team->getID()) {
 }
 
 GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
@@ -197,16 +196,27 @@ void RatingCalculator::clearRatings() {
 }
 
 TeamRating* RatingCalculator::getTeamRating(FootballTeam* team) {
-	TeamRating* teamRating = teamRatings[team];
-	if (teamRating == NULL) {
-		teamRating = new TeamRating(team);
-		teamRatings[team] = teamRating;
+
+	std::map<FootballTeam*, TeamRating*>::iterator i = teamRatings.find(team);
+	if (i == teamRatings.end()) {
+		TeamRating* rating = new TeamRating(team);
+		teamRatings[team] = rating;
+		return rating;
 	}
-	return teamRating;
+	return (*i).second;
+}
+
+void printGames(vector<FootballGame*> gamesList) {
+	vector<FootballGame*>::iterator i;
+	printf("Games analised: %ld\n", gamesList.size());
+	for (i = gamesList.begin(); i != gamesList.end(); i++) {
+		(*i)->debugPrint();
+	}
 }
 
 void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
+	//printGames(*games);
 	vector<FootballGame*>::iterator i;
 
 	for (i = games->begin(); i != games->end(); i++) {
@@ -215,20 +225,21 @@ void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 		homeRating->addGame(*i);
 		awayRating->addGame(*i);
 	}
-
+	delete games;
 }
 
 void RatingCalculator::preditRatings(int startRound, int endRound) {
 	clearRatings();
-	calculateTeamRatings(1, startRound - 1);
+	calculateTeamRatings(1, startRound);
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	vector<FootballGame*>::iterator i;
-
 	for (i = games->begin(); i != games->end(); i++) {
 		FootballGame* game = *i;
 
 		TeamRating* homeRating = getTeamRating(game->getHomeTeam());
 		TeamRating* awayRating = getTeamRating(game->getAwayTeam());
+		//homeRating->debugPrint();
+		//awayRating->debugPrint();
 		double homeAttack = homeRating->getHomeScoreRating();
 		double awayAttack = awayRating->getAwayScoreRating();
 		double homeDefense = homeRating->getHomeDefenseRating();
@@ -240,6 +251,7 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 		//averageLeagueAway += awayTeam->getAwayScoreRating();
 		GameRating * gameRating = new GameRating(game, predictedHomeAverage,
 				predictedAwayAverage);
+		//gameRating->debugPrint();
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);
 	}
@@ -280,15 +292,16 @@ vector<GameRating*>* RatingCalculator::getGameRatings() {
 }
 
 GameRating * RatingCalculator::getRatings(FootballGame * game) {
-	GameRating* gameRating = ratingsMap[game];
+	map<FootballGame*, GameRating*>::iterator i = ratingsMap.find(game);
 
-	if (gameRating == NULL) {
+	if (i == ratingsMap.end()) {
 		printf("Game rating is null.%s - %s\n",
 				game->getHomeTeam()->getName().c_str(),
 				game->getAwayTeam()->getName().c_str());
+		return NULL;
 	}
 
-	return gameRating;
+	return (*i).second;
 }
 
 RatingCalculator* RatingFactory::createPoissonRating(FootballLeague* league) {

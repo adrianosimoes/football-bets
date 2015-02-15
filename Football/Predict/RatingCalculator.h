@@ -19,6 +19,7 @@ enum FootballResult {
 class TeamRating: public FootballTeam {
 public:
 	TeamRating(FootballTeam* team);
+	TeamRating();
 };
 
 class GameRating {

@@ -68,6 +68,8 @@ vector<FootballGame*>* FootballLeague::getGames(int startRound, int lastRound) {
 	return newVec;
 }
 
+
+
 void FootballLeague::addGame(FootballGame* game) {
 	game->getHomeTeam()->addGame(game);
 	game->getAwayTeam()->addGame(game);

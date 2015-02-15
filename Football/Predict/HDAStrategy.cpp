@@ -35,7 +35,6 @@ int Strategy::getTotalBetsMade() {
 
 HDAStrategy::HDAStrategy(PredictLeague* pleague, int profitMargin) :
 		Strategy(pleague), profitMargin(profitMargin) {
-//calculateBets();
 }
 
 Bet::Bet(bool homeWin, bool draw, bool awayWin, bool over25, bool under25,
@@ -154,20 +153,19 @@ Bet* HDAStrategy::calculateBet(GameRating * rating) {
 
 void HDAStrategy::printBets() {
 	vector<Bet*>::iterator i;
-	printf("Good Bets(%d)  \n", profitMargin);
-	/*for (i = goodBets->begin(); i != goodBets->end(); i++) {
-	 FootballGame* game = (*i)->getGame();
-	 printf("Match: %s - %s. Bet: %c Odd: %f Result: %f\n",
-	 game->getHomeTeam()->getName().c_str(),
-	 game->getAwayTeam()->getName().c_str(), (*i)->getbetType(), (*i)->get,
-	 result);
-	 }*/
-	printf(
-			"Winnings: %f Perc Wins: %f. Average Odd: %f. Win per Bet: %f. Bets: %ld\n",
-			winMoney, goodBets->size() > 0 ? succBets / goodBets->size() : 0,
-			succBets > 0 ? sumOdds / succBets : 0,
-			goodBets->size() > 0 ? winMoney / goodBets->size() : 0,
-			goodBets->size());
+	printf("Good Bets(%ld)  \n", goodBets->size());
+	for (i = goodBets->begin(); i != goodBets->end(); i++) {
+		FootballGame* game = (*i)->getGame();
+		printf("Match: %s - %s. Bet: %c\n",
+				game->getHomeTeam()->getName().c_str(),
+				game->getAwayTeam()->getName().c_str(), (*i)->getbetType());
+	}
+	/*printf(
+	 "Winnings: %f Perc Wins: %f. Average Odd: %f. Win per Bet: %f. Bets: %ld\n",
+	 winMoney, goodBets->size() > 0 ? succBets / goodBets->size() : 0,
+	 succBets > 0 ? sumOdds / succBets : 0,
+	 goodBets->size() > 0 ? winMoney / goodBets->size() : 0,
+	 goodBets->size());*/
 }
 
 HDAStrategy::~HDAStrategy() {

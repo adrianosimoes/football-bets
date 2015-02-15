@@ -11,6 +11,12 @@
 
 int FootballTeam::idCounter = 1;
 
+
+FootballTeam::FootballTeam(string name, int id) : id(id), name(name) {
+	homeGoals=0,awayGoals=0,homeConceded=0,awayConceded=0, homeMatches=0,awayMatches=0;
+	games = vector<FootballGame*>();
+}
+
 FootballTeam::FootballTeam(string teamName) :
 		name(teamName), homeGoals(0), awayGoals(0), homeConceded(0), awayConceded(
 				0), homeMatches(0), awayMatches(0) {
@@ -23,10 +29,12 @@ void FootballTeam::addGame(FootballGame* game) {
 		homeMatches++;
 		homeGoals += game->getHomeScore();
 		homeConceded += game->getAwayScore();
-	} else {
+	} else if(game->getAwayTeam()->getID() == getID()) {
 		awayMatches++;
 		awayGoals += game->getAwayScore();
 		awayConceded += game->getHomeScore();
+	} else {
+		throw "Team not present in Add Game.";
 	}
 	games.push_back(game);
 }

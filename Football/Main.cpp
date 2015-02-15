@@ -95,13 +95,13 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		//plp->predict(5, 6);
 		//plp->printResultsHDL();
 		//(*i).second->printStats(true);
-		for (int j = 8; j <= 10; j++) {
-			HDAStrategy* strat = new HDAStrategy(plp, j);
+		//for (int j = 5; j <= 15; j++) {
+			HDAStrategy* strat = new HDAStrategy(plp, 9);
 			BackTrack* bt = new BackTrack(strat);
 			bt->run();
 			delete strat;
 			delete bt;
-		}
+		//}
 		delete plp;
 	}
 	printf("Finished\n");
