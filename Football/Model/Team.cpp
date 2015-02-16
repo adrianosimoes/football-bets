@@ -11,9 +11,10 @@
 
 int FootballTeam::idCounter = 1;
 
-
-FootballTeam::FootballTeam(string name, int id) : id(id), name(name) {
-	homeGoals=0,awayGoals=0,homeConceded=0,awayConceded=0, homeMatches=0,awayMatches=0;
+FootballTeam::FootballTeam(string name, int id) :
+		id(id), name(name) {
+	homeGoals = 0, awayGoals = 0, homeConceded = 0, awayConceded = 0, homeMatches =
+			0, awayMatches = 0;
 	games = vector<FootballGame*>();
 }
 
@@ -24,16 +25,27 @@ FootballTeam::FootballTeam(string teamName) :
 	games = vector<FootballGame*>();
 }
 
-void FootballTeam::addGame(FootballGame* game) {
-	if (game->getHomeTeam()->getID() == getID()) {
+void FootballTeam::addGame(FootballGame* game, bool homeTeam) {
+	if (homeTeam) {
 		homeMatches++;
 		homeGoals += game->getHomeScore();
 		homeConceded += game->getAwayScore();
-	} else if(game->getAwayTeam()->getID() == getID()) {
+	} else {
 		awayMatches++;
 		awayGoals += game->getAwayScore();
 		awayConceded += game->getHomeScore();
+	}
+}
+
+void FootballTeam::addGame(FootballGame* game) {
+	if (game->getHomeTeam()->getID() == getID()) {
+		addGame(game, true);
+	}
+	else if (game->getAwayTeam()->getID() == getID()) {
+		addGame(game, false);
 	} else {
+		//printf("team: %s\n", getName().c_str());
+		//game->debugPrint();
 		throw "Team not present in Add Game.";
 	}
 	games.push_back(game);
@@ -69,7 +81,7 @@ void FootballTeam::debugPrint() {
 	}
 
 	std::stringstream teamPrint;
-	teamPrint << id << ": " << name;
+	teamPrint << "Team:" << id << ": " << name << "\tStats:" << getHomeScoreRating()  <<";" << getAwayScoreRating();
 	Utils::print(teamPrint.str());
 }
 

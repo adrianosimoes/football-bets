@@ -7,7 +7,51 @@
 
 #include "RatingCalculator.h"
 
-TeamRating::TeamRating(FootballTeam* team) : FootballTeam(team->getName(),team->getID()) {
+TeamRating::TeamRating(FootballTeam* team) :
+		FootballTeam(team->getName(), team->getID()) {
+	homeScoreRating = 0;
+	awayScoreRating = 0;
+	homeDefenseRating = 0;
+	awayDefenseRating = 0;
+}
+
+void TeamRating::setRatingsFromStats() {
+	homeScoreRating = FootballTeam::getHomeScoreRating();
+	awayScoreRating = FootballTeam::getAwayScoreRating();
+	homeDefenseRating = FootballTeam::getHomeDefenseRating();
+	awayDefenseRating = FootballTeam::getAwayDefenseRating();
+}
+
+void TeamRating::setRatings(double homeScoreRating, double awayScoreRating,
+		double homeDefenseRating, double awayDefenseRating) {
+	this->homeScoreRating = homeScoreRating;
+	this->awayScoreRating = awayScoreRating;
+	this->homeDefenseRating = homeDefenseRating;
+	this->awayDefenseRating = awayDefenseRating;
+}
+
+void TeamRating::setRatingsToAverage(double leagueHome, double leagueAway) {
+	this->homeScoreRating = (homeMatches ? (homeGoals / homeMatches) : 30)
+			/ leagueHome;
+	this->awayScoreRating = (awayMatches ? (awayGoals / awayMatches) : 30)
+			/ leagueAway;
+	this->homeDefenseRating = (homeMatches ? (homeConceded / homeMatches) : 30)
+			/ leagueAway;
+	this->awayDefenseRating = (awayMatches ? (awayConceded / awayMatches) : 30)
+			/ leagueHome;
+}
+
+double TeamRating::getHomeScoreRating() {
+	return homeScoreRating;
+}
+double TeamRating::getAwayScoreRating() {
+	return awayScoreRating;
+}
+double TeamRating::getHomeDefenseRating() {
+	return homeDefenseRating;
+}
+double TeamRating::getAwayDefenseRating() {
+	return awayDefenseRating;
 }
 
 GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
@@ -175,7 +219,7 @@ RatingCalculator::RatingCalculator(FootballLeague* league) :
 		league(league) {
 	ratingsMap = map<FootballGame*, GameRating*>();
 	ratings = new vector<GameRating*>();
-	averageRating = NULL;
+	averageTeamRating = NULL;
 	teamRatings = map<FootballTeam*, TeamRating*>();
 }
 
@@ -191,8 +235,8 @@ void RatingCalculator::clearRatings() {
 	teamRatings.clear();
 	ratingsMap.clear();
 	ratings->clear();
-	delete averageRating;
-	averageRating = NULL;
+	delete averageTeamRating;
+	averageTeamRating = NULL;
 }
 
 TeamRating* RatingCalculator::getTeamRating(FootballTeam* team) {
@@ -217,14 +261,30 @@ void printGames(vector<FootballGame*> gamesList) {
 void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 	vector<FootballGame*>* games = league->getGames(startRound, endRound);
 	//printGames(*games);
-	vector<FootballGame*>::iterator i;
 
+	FootballTeam* avg = new FootballTeam("Avg");
+	averageTeamRating = new TeamRating(avg);
+
+	vector<FootballGame*>::iterator i;
 	for (i = games->begin(); i != games->end(); i++) {
 		TeamRating* homeRating = getTeamRating((*i)->getHomeTeam());
 		TeamRating* awayRating = getTeamRating((*i)->getAwayTeam());
 		homeRating->addGame(*i);
 		awayRating->addGame(*i);
+		averageTeamRating->addGame(*i, true);
+		averageTeamRating->addGame(*i, false);
 	}
+
+	averageTeamRating->setRatingsFromStats();
+	averageTeamRating->debugPrint();
+	std::map<FootballTeam*, TeamRating*>::iterator j;
+	for (j = teamRatings.begin(); j != teamRatings.end(); j++) {
+		TeamRating* rating = (*j).second;
+		//rating->setRatingsToAverage(averageTeamRating->getHomeScoreRating(),
+		//		averageTeamRating->getAwayScoreRating());
+		rating->setRatingsFromStats();
+	}
+
 	delete games;
 }
 
@@ -246,12 +306,12 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 		double awayDefense = awayRating->getAwayDefenseRating();
 
 		double predictedHomeAverage = (homeAttack + awayDefense) / 2;
-		double predictedAwayAverage = (awayAttack + homeDefense) / 2;
+		double predictedAwayAverage = (awayAttack+ homeDefense) / 2;
 		//averageLeagueHome += homeTeam->getHomeScoreRating();
 		//averageLeagueAway += awayTeam->getAwayScoreRating();
 		GameRating * gameRating = new GameRating(game, predictedHomeAverage,
 				predictedAwayAverage);
-		//gameRating->debugPrint();
+		gameRating->debugPrint();
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);
 	}

@@ -22,13 +22,14 @@ protected:
 public:
 	FootballTeam(string name);
 	string getName();
+	void addGame(FootballGame* game, bool homeTeam);
 	void addGame(FootballGame* game);
 	int getID();
 	void debugPrint();
-	double getHomeScoreRating();
-	double getAwayScoreRating();
-	double getHomeDefenseRating();
-	double getAwayDefenseRating();
+	virtual double getHomeScoreRating();
+	virtual double getAwayScoreRating();
+	virtual double getHomeDefenseRating();
+	virtual double getAwayDefenseRating();
 	virtual ~FootballTeam();
 };
 

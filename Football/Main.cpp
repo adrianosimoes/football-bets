@@ -95,8 +95,8 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		//plp->predict(5, 6);
 		//plp->printResultsHDL();
 		//(*i).second->printStats(true);
-		//for (int j = 5; j <= 15; j++) {
-			HDAStrategy* strat = new HDAStrategy(plp, 9);
+		//for (int j = 9; j <= 17; j++) {
+			HDAStrategy* strat = new HDAStrategy(plp, 15);
 			BackTrack* bt = new BackTrack(strat);
 			bt->run();
 			delete strat;
