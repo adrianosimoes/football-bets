@@ -22,6 +22,13 @@ void TeamRating::setRatingsFromStats() {
 	awayDefenseRating = FootballTeam::getAwayDefenseRating();
 }
 
+double TeamRating::getHomeScoreRating(TeamRating* awayRating, TeamRating*  avgRating){
+	return (this->homeScoreRating + awayRating->getAwayDefenseRating()) / 2;
+}
+double TeamRating::getAwayScoreRating(TeamRating* homeRating, TeamRating*  avgRating){
+	return (this->awayScoreRating + homeRating->getHomeDefenseRating()) / 2;
+}
+
 void TeamRating::setRatings(double homeScoreRating, double awayScoreRating,
 		double homeDefenseRating, double awayDefenseRating) {
 	this->homeScoreRating = homeScoreRating;
@@ -54,8 +61,8 @@ double TeamRating::getAwayDefenseRating() {
 	return awayDefenseRating;
 }
 
-GameRating::GameRating(FootballGame* game, double homeR, double awayR) :
-		game(game), homeRating(homeR), awayRating(awayR) {
+GameRating::GameRating(FootballGame* game, TeamRating* homeR,  TeamRating* awayR,   TeamRating* avgRating) :
+		game(game), homeRating(homeR), awayRating(awayR), avgRating(avgRating) {
 
 	goalsPerc = new vector<vector<double> >(MAX_NUMBER_GOALS_PREDICT + 1,
 			vector<double>(MAX_NUMBER_GOALS_PREDICT + 1, 0));
@@ -88,12 +95,12 @@ void GameRating::calculateGamePercentages(bool debugPrint) {
 	homePerc = 0, drawPerc = 0, awayPerc = 0;
 
 	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
-		homeGoalsPerc[i] = RatingCalculator::poisson_pmf(homeRating, i);
-		awayGoalsPerc[i] = RatingCalculator::poisson_pmf(awayRating, i);
+		homeGoalsPerc[i] = RatingCalculator::poisson_pmf(getHomeRatingScore(), i);
+		awayGoalsPerc[i] = RatingCalculator::poisson_pmf(getAwayRatingScore(), i);
 	}
 
 	if (Utils::debugMathOn() || debugPrint) {
-		printf("Game Percentage Data:\t%f\t%f\n", homeRating, awayRating);
+		printf("Game Percentage Data:\t%f\t%f\n",getHomeRatingScore(), getAwayRatingScore());
 	}
 
 	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
@@ -153,12 +160,12 @@ double RatingCalculator::poisson_pmf(const double mean, const int value) {
 	return exp(value * log(mean) - lgamma(value + 1.0) - mean);
 }
 
-double GameRating::getHomeRating() {
-	return homeRating;
+double GameRating::getHomeRatingScore() {
+	return homeRating->getHomeScoreRating(awayRating, avgRating);
 }
 
-double GameRating::getAwayRating() {
-	return awayRating;
+double GameRating::getAwayRatingScore() {
+	return awayRating->getAwayScoreRating(homeRating, avgRating);
 }
 
 bool GameRating::isHomeWin() {
@@ -207,8 +214,8 @@ void GameRating::debugPrint() {
 	 double predictedAwayTeamScore = PredictLeaguePoisson::getPredictedGoals(
 	 predictedAwayAverage);*/
 
-	printf("Pred Home Score: %f\tPred Away  Score:%f\n", homeRating,
-			awayRating);
+	printf("Pred Home Score: %f\tPred Away  Score:%f\n", getHomeRatingScore(),
+			getAwayRatingScore());
 
 	printf("Home Win: %d\tDraw:%d\tAway Win:%d\t\n", homePerc, drawPerc,
 			awayPerc);
@@ -300,17 +307,9 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 		TeamRating* awayRating = getTeamRating(game->getAwayTeam());
 		//homeRating->debugPrint();
 		//awayRating->debugPrint();
-		double homeAttack = homeRating->getHomeScoreRating();
-		double awayAttack = awayRating->getAwayScoreRating();
-		double homeDefense = homeRating->getHomeDefenseRating();
-		double awayDefense = awayRating->getAwayDefenseRating();
 
-		double predictedHomeAverage = (homeAttack + awayDefense) / 2;
-		double predictedAwayAverage = (awayAttack+ homeDefense) / 2;
-		//averageLeagueHome += homeTeam->getHomeScoreRating();
-		//averageLeagueAway += awayTeam->getAwayScoreRating();
-		GameRating * gameRating = new GameRating(game, predictedHomeAverage,
-				predictedAwayAverage);
+		GameRating * gameRating = new GameRating(game, homeRating,
+				awayRating, averageTeamRating);
 		gameRating->debugPrint();
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);

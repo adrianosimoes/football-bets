@@ -26,6 +26,8 @@ public:
 	double getAwayScoreRating();
 	double getHomeDefenseRating();
 	double getAwayDefenseRating();
+	double getHomeScoreRating(TeamRating* awayRating, TeamRating*  avgRating);
+	double getAwayScoreRating(TeamRating* homeRating, TeamRating*  avgRating);
 	void setRatingsFromStats();
 	void setRatings(double homeScoreRating, double awayScoreRating,
 			double homeDefenseRating, double awayDefenseRating);
@@ -35,19 +37,20 @@ public:
 class GameRating {
 protected:
 	FootballGame *game;
-	double homeRating;
-	double awayRating;
+	TeamRating* homeRating;
+	TeamRating* awayRating;
+	TeamRating* avgRating;
 	int homePerc, drawPerc, awayPerc;
 	FootballResult predcitedResult;
 	vector<vector<double> >* goalsPerc;
 public:
-	GameRating(FootballGame* game, double homeRating, double awayRating);
+	GameRating(FootballGame* game, TeamRating* homeRating, TeamRating* awayRating, TeamRating* averageRating);
 	int getHomeWinPerc();
 	int getDrawPerc();
 	int getAwayWinPerc();
 	void calculateGamePercentages(bool debugPrint);
-	double getHomeRating();
-	double getAwayRating();
+	double  getHomeRatingScore();
+	double  getAwayRatingScore();
 	bool isHomeWin();
 	bool isDraw();
 	bool isAwayWin();

@@ -117,32 +117,53 @@ TEST_CASE( "League", "" ) {
 TEST_CASE( "Predict Game", "" ) {
 	FootballTeam *teamA = new FootballTeam("A");
 	FootballTeam *teamB = new FootballTeam("B");
+	TeamRating* ra = new TeamRating(teamA);
+	TeamRating* rb = new TeamRating(teamB);
 	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
-	GameRating* pred1 = new GameRating(game1, 5, 3);
+	FootballGame* game2 = new FootballGame("date", teamA, teamB, 5, 3);
+	ra->addGame(game2);
+	rb->addGame(game2);
+	ra->setRatingsFromStats();
+	rb->setRatingsFromStats();
+
+	GameRating* pred1 = new GameRating(game1, ra, rb, NULL);
 
 	REQUIRE(game1->getHomeScore() == 2);
 	REQUIRE(game1->getAwayScore() == 1);
-	REQUIRE(pred1->getHomeRating() == 5);
-	REQUIRE(pred1->getAwayRating() == 3);
+	REQUIRE(pred1->getHomeRatingScore() == 5);
+	REQUIRE(pred1->getAwayRatingScore() == 3);
 	REQUIRE(pred1->isHomeWin());
 	REQUIRE(pred1->isDraw() == false);
 	REQUIRE(pred1->isAwayWin() == false);
 
-	GameRating* pred2 = new GameRating(game1, 1, 2);
-	REQUIRE(pred2->getHomeRating() == 1);
-	REQUIRE(pred2->getAwayRating() == 2);
-	REQUIRE(pred2->isHomeWin() == false);
-	REQUIRE(pred2->isDraw() == false);
-	REQUIRE(pred2->isAwayWin());
+	FootballGame* game3 = new FootballGame("date", teamA, teamB, 1, 2);
+	TeamRating* ra2 = new TeamRating(teamA);
+	TeamRating* rb2 = new TeamRating(teamB);
+	ra2->addGame(game3);
+	rb2->addGame(game3);
+	ra2->setRatingsFromStats();
+	rb2->setRatingsFromStats();
+	GameRating* pred3 = new GameRating(game2, ra2, rb2, NULL);
+	REQUIRE(pred3->getHomeRatingScore() == 1);
+	REQUIRE(pred3->getAwayRatingScore() == 2);
+	REQUIRE(pred3->isHomeWin() == false);
+	REQUIRE(pred3->isDraw() == false);
+	REQUIRE(pred3->isAwayWin());
 }
 
 TEST_CASE( "Game Rating", "" ) {
 	FootballTeam *teamA = new FootballTeam("A");
 	FootballTeam *teamB = new FootballTeam("B");
-	FootballGame* game1 = new FootballGame("date", teamA, teamB, 2, 1);
-	GameRating *gr = new GameRating(game1, 3.5, 4);
-	REQUIRE(gr->getHomeRating() == 3.5);
-	REQUIRE(gr->getAwayRating() == 4);
+	TeamRating* ra = new TeamRating(teamA);
+	TeamRating* rb = new TeamRating(teamB);
+	FootballGame* game1 = new FootballGame("date", teamA, teamB, 3, 4);
+	ra->addGame(game1);
+	rb->addGame(game1);
+	ra->setRatingsFromStats();
+	rb->setRatingsFromStats();
+	GameRating *gr = new GameRating(game1, ra, rb, NULL);
+	REQUIRE(gr->getHomeRatingScore() == 3);
+	REQUIRE(gr->getAwayRatingScore() == 4);
 }
 
 TEST_CASE( "Rating Calculator", "" ) {
@@ -160,8 +181,8 @@ TEST_CASE( "Rating Calculator", "" ) {
 	GameRating* firstGame = rc.getRatings(game1b);
 
 	REQUIRE(firstGame!=NULL);
-	REQUIRE(firstGame->getHomeRating() == 2);
-	REQUIRE(firstGame->getAwayRating() == 1);
+	REQUIRE(firstGame->getHomeRatingScore() == 2);
+	REQUIRE(firstGame->getAwayRatingScore() == 1);
 }
 
 TEST_CASE( "Predict Possion", "" ) {
@@ -181,8 +202,8 @@ TEST_CASE( "Predict Possion", "" ) {
 	GameRating* firstGame = (*predictedGames)[0];
 	GameRating* r = pl.getGameRating(game2);
 
-	REQUIRE(firstGame->getHomeRating() == 2);
-	REQUIRE(firstGame->getAwayRating() == 1);
+	REQUIRE(firstGame->getHomeRatingScore() == 2);
+	REQUIRE(firstGame->getAwayRatingScore() == 1);
 	REQUIRE(firstGame->isHomeWin());
 	ASSERT_BOOL(firstGame->isDraw() == false);
 	ASSERT_BOOL(firstGame->isAwayWin() == false);
@@ -212,7 +233,6 @@ TEST_CASE( "Predict Possion Bigger League", "" ) {
 	league.addGame(game7);
 	league.addGame(game8);
 
-
 	PredictLeague pl = PredictLeague(&league,
 			RatingFactory::createPoissonRating(&league));
 
@@ -222,15 +242,15 @@ TEST_CASE( "Predict Possion Bigger League", "" ) {
 
 	GameRating* fifth = (*predictedGames)[0];
 
-	REQUIRE(fifth->getHomeRating() == 2.5);
-	REQUIRE(fifth->getAwayRating() == 1.5);
+	REQUIRE(fifth->getHomeRatingScore() == 2.5);
+	REQUIRE(fifth->getAwayRatingScore() == 1.5);
 	REQUIRE(fifth->isHomeWin());
 	ASSERT_BOOL(fifth->isDraw() == false);
 	ASSERT_BOOL(fifth->isAwayWin() == false);
 
 	GameRating* sixth = (*predictedGames)[1];
-	REQUIRE(sixth->getHomeRating() == 2);
-	REQUIRE(sixth->getAwayRating() == 1);
+	REQUIRE(sixth->getHomeRatingScore() == 2);
+	REQUIRE(sixth->getAwayRatingScore() == 1);
 	ASSERT_BOOL(sixth->isDraw() == false);
 	ASSERT_BOOL(sixth->isHomeWin());
 	ASSERT_BOOL(sixth->isAwayWin() == false);
