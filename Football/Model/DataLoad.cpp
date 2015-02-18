@@ -97,7 +97,7 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 	newProcessing.seekg(ios::beg);
 
 // Discarding the first line of the file
-	int homeTeamOddsField = -1;
+	int homeTeamOddsField = -1, underOddsField= -1, overOddsField= -1;
 	ifstream file(temp.c_str());
 
 	string headerLine;
@@ -109,14 +109,18 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 	while (getline(headerLiness, fieldHeader, ',')) {
 		if (fieldHeader.compare(string(CSV_HOME_TEAM_ODDS_HEADER)) == 0) {
 			homeTeamOddsField = count;
+		} else if(fieldHeader.compare(string(CSV_UNDER_ODDS_HEADER))==0){
+			underOddsField=count;
+		}else if(fieldHeader.compare(string(CSV_OVER_ODDS_HEADER))==0){
+			overOddsField=count;
 		}
 		count++;
 	}
 	while (!newProcessing.eof()) {
 		string homeTeamName, awayTeamName, date, homeTeamScore, awayTeamScore,
-				homeOddsStr, drawOddsStr, awayOddsStr;
+				homeOddsStr, drawOddsStr, awayOddsStr, underOddsStr,overOddsStr;
 		int homeTeamGoals, awayTeamGoals;
-		double homeOdds, drawOdds, awayOdds;
+		double homeOdds, drawOdds, awayOdds,underOdds=0,overOdds=0;
 		vector<string> fields(CSV_FIELDS);
 		string thisField, period, scannedLine;
 
@@ -148,15 +152,21 @@ void DataLoad::readMatchesToLeague(char* filename, FootballLeague* league) {
 		drawOddsStr = fields[homeTeamOddsField + 1];
 		awayOddsStr = fields[homeTeamOddsField + 2];
 
+		underOddsStr = fields[underOddsField];
+		overOddsStr = fields[overOddsField];
+
 		homeOdds = atof((char*) homeOddsStr.c_str());
 		drawOdds = atof((char*) drawOddsStr.c_str());
 		awayOdds = atof((char*) awayOddsStr.c_str());
+
+		underOdds = atof((char*) underOddsStr.c_str());
+		overOdds = atof((char*) overOddsStr.c_str());
 
 		if (homeTeamName.size() > 0) {
 			FootballGame* game = new FootballGame(date, homeTeam, awayTeam,
 					homeTeamGoals, awayTeamGoals);
 			league->addGame(game);
-			game->setOdds(homeOdds, drawOdds, awayOdds);
+			game->setOdds(homeOdds, drawOdds, awayOdds,underOdds,overOdds);
 		}
 	}
 	newProcessing.close();

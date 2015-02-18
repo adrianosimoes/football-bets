@@ -22,10 +22,12 @@ void TeamRating::setRatingsFromStats() {
 	awayDefenseRating = FootballTeam::getAwayDefenseRating();
 }
 
-double TeamRating::getHomeScoreRating(TeamRating* awayRating, TeamRating*  avgRating){
+double TeamRating::getHomeScoreRating(TeamRating* awayRating,
+		TeamRating* avgRating) {
 	return (this->homeScoreRating + awayRating->getAwayDefenseRating()) / 2;
 }
-double TeamRating::getAwayScoreRating(TeamRating* homeRating, TeamRating*  avgRating){
+double TeamRating::getAwayScoreRating(TeamRating* homeRating,
+		TeamRating* avgRating) {
 	return (this->awayScoreRating + homeRating->getHomeDefenseRating()) / 2;
 }
 
@@ -61,7 +63,8 @@ double TeamRating::getAwayDefenseRating() {
 	return awayDefenseRating;
 }
 
-GameRating::GameRating(FootballGame* game, TeamRating* homeR,  TeamRating* awayR,   TeamRating* avgRating) :
+GameRating::GameRating(FootballGame* game, TeamRating* homeR, TeamRating* awayR,
+		TeamRating* avgRating) :
 		game(game), homeRating(homeR), awayRating(awayR), avgRating(avgRating) {
 
 	goalsPerc = new vector<vector<double> >(MAX_NUMBER_GOALS_PREDICT + 1,
@@ -89,18 +92,29 @@ int GameRating::getAwayWinPerc() {
 	return awayPerc;
 }
 
+int GameRating::getUnderPerc() {
+	return underPerc;
+}
+
+int GameRating::getOverPerc() {
+	return overPerc;
+}
+
 void GameRating::calculateGamePercentages(bool debugPrint) {
 	vector<double> homeGoalsPerc(MAX_NUMBER_GOALS_PREDICT + 1);
 	vector<double> awayGoalsPerc(MAX_NUMBER_GOALS_PREDICT + 1);
-	homePerc = 0, drawPerc = 0, awayPerc = 0;
+	homePerc = 0, drawPerc = 0, awayPerc = 0, underPerc = 0, overPerc = 0;
 
 	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
-		homeGoalsPerc[i] = RatingCalculator::poisson_pmf(getHomeRatingScore(), i);
-		awayGoalsPerc[i] = RatingCalculator::poisson_pmf(getAwayRatingScore(), i);
+		homeGoalsPerc[i] = RatingCalculator::poisson_pmf(getHomeRatingScore(),
+				i);
+		awayGoalsPerc[i] = RatingCalculator::poisson_pmf(getAwayRatingScore(),
+				i);
 	}
 
 	if (Utils::debugMathOn() || debugPrint) {
-		printf("Game Percentage Data:\t%f\t%f\n",getHomeRatingScore(), getAwayRatingScore());
+		printf("Game Rating Score Data:\t%f\t%f\n", getHomeRatingScore(),
+				getAwayRatingScore());
 	}
 
 	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
@@ -126,15 +140,32 @@ void GameRating::calculateGamePercentages(bool debugPrint) {
 		}
 	}
 
+	// Under/Over Calc:
+	for (int i = 0; i <= MAX_NUMBER_GOALS_PREDICT; i++) {
+		for (int j = 0; j <= MAX_NUMBER_GOALS_PREDICT; j++) {
+			if (i + j <= 2) {
+				underPerc += (int) (homeGoalsPerc[i] * awayGoalsPerc[j]
+						* PERC_PRECISION * 100);
+			} else {
+				overPerc += (int) (homeGoalsPerc[i] * awayGoalsPerc[j]
+						* PERC_PRECISION * 100);
+			}
+		}
+	}
+
 	if (Utils::debugMathOn() || debugPrint) {
-		printf("Home:\t%d\tDraw:\t%d\tAway:\t%d\n",
+		printf("Home:\t%d\tDraw:\t%d\tAway:\t%d\n Under:\t%d\tOver:%d\n",
 				(int) homePerc / PERC_PRECISION,
 				(int) drawPerc / PERC_PRECISION,
-				(int) awayPerc / PERC_PRECISION);
+				(int) awayPerc / PERC_PRECISION,
+				(int) underPerc / PERC_PRECISION,
+				(int) overPerc / PERC_PRECISION);
 	}
 	homePerc = homePerc / PERC_PRECISION;
 	drawPerc = drawPerc / PERC_PRECISION;
 	awayPerc = awayPerc / PERC_PRECISION;
+	underPerc = underPerc / PERC_PRECISION;
+	overPerc = overPerc / PERC_PRECISION;
 }
 
 int RatingCalculator::getPredictedGoals(double average) {
@@ -222,8 +253,8 @@ void GameRating::debugPrint() {
 
 }
 
-RatingCalculator::RatingCalculator(FootballLeague* league) :
-		league(league) {
+RatingCalculator::RatingCalculator(FootballLeague* league, RatingFactory* rf) :
+		league(league), factory(rf) {
 	ratingsMap = map<FootballGame*, GameRating*>();
 	ratings = new vector<GameRating*>();
 	averageTeamRating = NULL;
@@ -250,7 +281,7 @@ TeamRating* RatingCalculator::getTeamRating(FootballTeam* team) {
 
 	std::map<FootballTeam*, TeamRating*>::iterator i = teamRatings.find(team);
 	if (i == teamRatings.end()) {
-		TeamRating* rating = new TeamRating(team);
+		TeamRating* rating = factory->createTeamRating(team);
 		teamRatings[team] = rating;
 		return rating;
 	}
@@ -270,7 +301,7 @@ void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 	//printGames(*games);
 
 	FootballTeam* avg = new FootballTeam("Avg");
-	averageTeamRating = new TeamRating(avg);
+	averageTeamRating = factory->createTeamRating(avg);
 
 	vector<FootballGame*>::iterator i;
 	for (i = games->begin(); i != games->end(); i++) {
@@ -283,7 +314,7 @@ void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 	}
 
 	averageTeamRating->setRatingsFromStats();
-	averageTeamRating->debugPrint();
+	//averageTeamRating->debugPrint();
 	std::map<FootballTeam*, TeamRating*>::iterator j;
 	for (j = teamRatings.begin(); j != teamRatings.end(); j++) {
 		TeamRating* rating = (*j).second;
@@ -308,8 +339,8 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 		//homeRating->debugPrint();
 		//awayRating->debugPrint();
 
-		GameRating * gameRating = new GameRating(game, homeRating,
-				awayRating, averageTeamRating);
+		GameRating * gameRating = new GameRating(game, homeRating, awayRating,
+				averageTeamRating);
 		gameRating->debugPrint();
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);
@@ -363,8 +394,13 @@ GameRating * RatingCalculator::getRatings(FootballGame * game) {
 	return (*i).second;
 }
 
-RatingCalculator* RatingFactory::createPoissonRating(FootballLeague* league) {
-	return new RatingCalculator(league);
+RatingCalculator* RatingFactory::createRatingCalculator(
+		FootballLeague* league) {
+	return new RatingCalculator(league, this);
+}
+
+TeamRating* RatingFactory::createTeamRating(FootballTeam* team) {
+	return new TeamRating(team);
 }
 
 RatingCalculator::~RatingCalculator() {

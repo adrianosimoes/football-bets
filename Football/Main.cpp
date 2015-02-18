@@ -89,14 +89,15 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 	map<unsigned int, FootballLeague*>::iterator i;
 	for (i = leagues.begin(); i != leagues.end(); i++) {
 		printf("League: %s\n", i->second->getName().c_str());
-		PredictLeague *plp = new PredictLeague(i->second,
-				RatingFactory::createPoissonRating(i->second));
+		RatingFactory *rf = new RatingFactory();
+		PredictLeague *plp = new PredictLeague(i->second, rf);
 		//i->second->debugPrint();
 		//plp->predict(5, 6);
 		//plp->printResultsHDL();
 		//(*i).second->printStats(true);
-		//for (int j = 9; j <= 17; j++) {
-			HDAStrategy* strat = new HDAStrategy(plp, 15);
+		//for (int j = 15; j <= 25; j++) {
+			//HDAStrategy* strat = new HDAStrategy(plp, 13);
+			UOStrategy* strat = new UOStrategy(plp, 9);
 			BackTrack* bt = new BackTrack(strat);
 			bt->run();
 			delete strat;

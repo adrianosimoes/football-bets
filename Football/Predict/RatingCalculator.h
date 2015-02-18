@@ -12,6 +12,8 @@
 #include "../Model/Model.h"
 #include "../Utils/Utils.h"
 
+class RatingCalculator;
+
 enum FootballResult {
 	HOME_WIN = 1, DRAW = 0, AWAY_WIN = 2,
 };
@@ -40,7 +42,7 @@ protected:
 	TeamRating* homeRating;
 	TeamRating* awayRating;
 	TeamRating* avgRating;
-	int homePerc, drawPerc, awayPerc;
+	int homePerc, drawPerc, awayPerc, underPerc,overPerc;
 	FootballResult predcitedResult;
 	vector<vector<double> >* goalsPerc;
 public:
@@ -48,6 +50,8 @@ public:
 	int getHomeWinPerc();
 	int getDrawPerc();
 	int getAwayWinPerc();
+	int getUnderPerc();
+	int getOverPerc();
 	void calculateGamePercentages(bool debugPrint);
 	double  getHomeRatingScore();
 	double  getAwayRatingScore();
@@ -60,6 +64,12 @@ public:
 
 };
 
+class RatingFactory {
+public:
+	RatingCalculator* createRatingCalculator(FootballLeague* league);
+	TeamRating* createTeamRating(FootballTeam* team);
+};
+
 class RatingCalculator {
 protected:
 	map<FootballGame*, GameRating*> ratingsMap;
@@ -67,8 +77,9 @@ protected:
 	FootballLeague* league;
 	vector<GameRating*>* ratings;
 	TeamRating* averageTeamRating;
+	RatingFactory* factory;
 public:
-	RatingCalculator(FootballLeague *league);
+	RatingCalculator(FootballLeague *league, RatingFactory* rf);
 	virtual void preditRatings(int startRound, int endRound);
 	void calculateTeamRatings(int startRound, int endRound);
 	TeamRating* getTeamRating(FootballTeam* team);
@@ -81,9 +92,6 @@ public:
 	virtual ~RatingCalculator();
 };
 
-class RatingFactory {
-public:
-	static RatingCalculator* createPoissonRating(FootballLeague* league);
-};
+
 
 #endif /* PREDICT_RATINGCALCULATOR_H_ */

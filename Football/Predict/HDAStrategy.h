@@ -19,30 +19,25 @@ protected:
 	double winMoney,succBets,sumOdds;
 	vector<Bet*>* goodBets;
 	PredictLeague* predictedLeague;
+	int profitMargin;
 public:
-	Strategy(PredictLeague* league);
+	Strategy(PredictLeague* league, int profitMargin);
 	PredictLeague* getPredictLeague();
-	virtual void printBets()=0;
+	virtual void printBets();
 	virtual void calculateBets()=0;
 	double getWinMoney();
 	double getSuccBets();
 	double getSumOdds();
 	int getTotalBetsMade();
-	/*void calculateBets();
-	 Bet* calculateBet(GameRating * rating);
-	 virtual void printGoodBets();*/
+	virtual void cleanBets();
 	virtual ~Strategy()=0;
 };
 
 class HDAStrategy: public Strategy {
-protected:
-	int profitMargin;
 public:
 	HDAStrategy(PredictLeague* league, int profitMargin);
 	void calculateBets();
-	void cleanBets();
 	Bet* calculateBet(GameRating * rating);
-	void printBets();
 	virtual ~HDAStrategy();
 };
 
@@ -67,6 +62,8 @@ public:
 	bool isHomeBet();
 	bool isDrawBet();
 	bool isAwayBet();
+	bool isUnderBet();
+	bool isOverBet();
 	char getbetType();
 
 };

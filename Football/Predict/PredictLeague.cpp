@@ -74,8 +74,8 @@ void PredictLeague::setRating(RatingCalculator* ratingCalc) {
 	this->ratingCalc = ratingCalc;
 }
 
-PredictLeague::PredictLeague(FootballLeague* league, RatingCalculator* rc) :
-		league(league), ratingCalc(rc) {
+PredictLeague::PredictLeague(FootballLeague* league, RatingFactory* rf) :
+		league(league), factory(rf), ratingCalc(rf->createRatingCalculator(league)) {
 }
 
 PredictLeague::~PredictLeague() {

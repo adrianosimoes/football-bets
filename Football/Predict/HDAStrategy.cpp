@@ -7,8 +7,8 @@
 
 #include "HDAStrategy.h"
 
-Strategy::Strategy(PredictLeague* pLeague) :
-		predictedLeague(pLeague) {
+Strategy::Strategy(PredictLeague* pLeague, int margin) :
+		predictedLeague(pLeague), profitMargin(margin) {
 	goodBets = new vector<Bet*>();
 	winMoney = 0, succBets = 0, sumOdds = 0;
 }
@@ -34,7 +34,7 @@ int Strategy::getTotalBetsMade() {
 }
 
 HDAStrategy::HDAStrategy(PredictLeague* pleague, int profitMargin) :
-		Strategy(pleague), profitMargin(profitMargin) {
+		Strategy(pleague, profitMargin) {
 }
 
 Bet::Bet(bool homeWin, bool draw, bool awayWin, bool over25, bool under25,
@@ -77,7 +77,14 @@ char Bet::getbetType() {
 	return betType;
 }
 
-void HDAStrategy::cleanBets() {
+bool Bet::isUnderBet() {
+	return isUnder25;
+}
+bool Bet::isOverBet() {
+	return isOver25;
+}
+
+void Strategy::cleanBets() {
 	winMoney = 0, succBets = 0, sumOdds = 0;
 	vector<Bet*>::iterator i;
 	for (i = goodBets->begin(); i != goodBets->end(); i++) {
@@ -151,7 +158,7 @@ Bet* HDAStrategy::calculateBet(GameRating * rating) {
 	return NULL;
 }
 
-void HDAStrategy::printBets() {
+void Strategy::printBets() {
 	vector<Bet*>::iterator i;
 	printf("Good Bets(%ld)  \n", goodBets->size());
 	for (i = goodBets->begin(); i != goodBets->end(); i++) {

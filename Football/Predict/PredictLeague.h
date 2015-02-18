@@ -14,9 +14,10 @@
 class PredictLeague {
 protected:
 	FootballLeague* league;
+	RatingFactory* factory;
 	RatingCalculator* ratingCalc;
 public:
-	PredictLeague(FootballLeague* league, RatingCalculator *rc);
+	PredictLeague(FootballLeague* league, RatingFactory *rf);
 	void setRating(RatingCalculator* ratingCalc);
 	virtual void predict(int startRound, int roundBeforeEnd);
 	//virtual void printPredictions();

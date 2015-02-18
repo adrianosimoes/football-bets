@@ -175,7 +175,7 @@ TEST_CASE( "Rating Calculator", "" ) {
 	FootballGame* game1b = new FootballGame("date", teamA, teamB, 5, 3);
 	league.addGame(game1);
 	league.addGame(game1b);
-	RatingCalculator rc = RatingCalculator(&league);
+	RatingCalculator rc = RatingCalculator(&league, new RatingFactory());
 	rc.preditRatings(2, league.getLastRound() + 1);
 
 	GameRating* firstGame = rc.getRatings(game1b);
@@ -193,8 +193,7 @@ TEST_CASE( "Predict Possion", "" ) {
 	FootballGame* game2 = new FootballGame("date", teamA, teamB, 5, 5);
 	league.addGame(game1);
 	league.addGame(game2);
-	PredictLeague pl = PredictLeague(&league,
-			RatingFactory::createPoissonRating(&league));
+	PredictLeague pl = PredictLeague(&league, new RatingFactory());
 	pl.predict(2, league.getLastRound() + 1);
 	vector<GameRating*>* predictedGames = pl.getGameRatings();
 	ASSERT_BOOL(predictedGames->size() == 1);
@@ -233,8 +232,7 @@ TEST_CASE( "Predict Possion Bigger League", "" ) {
 	league.addGame(game7);
 	league.addGame(game8);
 
-	PredictLeague pl = PredictLeague(&league,
-			RatingFactory::createPoissonRating(&league));
+	PredictLeague pl = PredictLeague(&league, new RatingFactory());
 
 	pl.predict(3, league.getLastRound() + 1);
 	vector<GameRating*>* predictedGames = pl.getGameRatings();
@@ -264,16 +262,20 @@ TEST_CASE( "Test Odds", "" ) {
 	FootballGame* game2 = new FootballGame("date", teamB, teamA, 2, 3);
 	league.addGame(game1);
 	league.addGame(game2);
-	game1->setOdds(2.0, 3.0, 4.0);
-	game2->setOdds(7.0, 6.0, 5.0);
+	game1->setOdds(2.0, 3.0, 4.0, 1.5, 2.4);
+	game2->setOdds(7.0, 6.0, 5.0, 1.9, 1.8);
 
 	REQUIRE(compareDouble(game1->getHomeWinOdds(), 2.0));
 	REQUIRE(compareDouble(game1->getDrawOdds(), 3.0));
 	REQUIRE(compareDouble(game1->getAwayWinOdds(), 4.0));
+	REQUIRE(compareDouble(game1->getUnderOdds(), 1.5));
+	REQUIRE(compareDouble(game1->getOverOdds(), 2.4));
 
 	REQUIRE(compareDouble(game2->getHomeWinOdds(), 7.0));
 	REQUIRE(compareDouble(game2->getDrawOdds(), 6.0));
 	REQUIRE(compareDouble(game2->getAwayWinOdds(), 5.0));
+	REQUIRE(compareDouble(game2->getUnderOdds(), 1.9));
+	REQUIRE(compareDouble(game2->getOverOdds(), 1.8));
 }
 
 TEST_CASE( "Odds Conv", "" ) {
