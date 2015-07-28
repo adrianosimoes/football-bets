@@ -28,8 +28,6 @@ map<unsigned int, FootballLeague*> DataLoad::analyseFolder(string dirName) {
 						(int) (sizeof(char) * strlen(dir) + strlen(ep->d_name)
 								+ 2));
 
-				char *fileName = ep->d_name;
-
 				filepath[0] = '\0';
 				strcat(filepath, dir);
 
@@ -41,36 +39,14 @@ map<unsigned int, FootballLeague*> DataLoad::analyseFolder(string dirName) {
 
 				const char *currentFile = filepath;
 
-				//Ignore entry if it is a directory
-				ifstream stockFile((char *) currentFile);
-				string scannedLine;
-				getline(stockFile, scannedLine);
-
-				if (stockFile.is_open()
-						&& !(stockFile.rdstate() & ifstream::badbit)) {
-					stockFile.close();
-					stockFile.clear();
-				} else {
-					stockFile.close();
-					stockFile.clear();
-					continue;
-				}
-
 				// Creates the appropriated stock
 				FootballLeague* league = new FootballLeague();
 				DataLoad::readMatchesToLeague((char *) currentFile, league);
 
-				// Creates the desired indicator for all the data relative to the market stocks.
-				//defineStrategies(stPointer);
-
-				// Inserts the market stock within the stock map which contains all market stocks.
-				if (strcmp(fileName, "^DJI.csv") != 0
-						&& strcmp(fileName, "^GSPC.csv") != 0) {
 					leagues[key] = league;
 					cout << "Created " << league->getName() << " with key "
 							<< key << endl;
 					++key;
-				}
 			}
 		}
 		closedir(dirPt);

@@ -32,3 +32,7 @@ bool Utils::debugMathOn() {
 	return !Utils::configMap[string("debugMath")].compare("true");
 }
 
+bool Utils::debugOn(string func){
+	return !Utils::configMap[func].compare("true");
+}
+

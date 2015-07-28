@@ -6,6 +6,7 @@
  */
 
 #include "RatingCalculator.h"
+#include "StatisticsPrint.h"
 
 TeamRating::TeamRating(FootballTeam* team) :
 		FootballTeam(team->getName(), team->getID()) {
@@ -341,11 +342,13 @@ void RatingCalculator::preditRatings(int startRound, int endRound) {
 
 		GameRating * gameRating = new GameRating(game, homeRating, awayRating,
 				averageTeamRating);
-		gameRating->debugPrint();
+		//gameRating->debugPrint();
+		StatisticsPrint::printMatchStatisticsForPrediction(game, gameRating);
+
 		ratingsMap[game] = gameRating;
 		ratings->push_back(gameRating);
 	}
-	printGamesGoalsPerc();
+	//printGamesGoalsPerc();
 	delete games;
 }
 
@@ -362,7 +365,7 @@ void RatingCalculator::printGamesGoalsPerc() {
 			}
 		}
 	}
-	if (!Utils::debugOn()) {
+	if (!Utils::debugOn(string("debugPrintGamesGoalsPerc"))) {
 		return;
 	}
 	printf("Predicted Games Stats:\n");

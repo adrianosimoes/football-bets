@@ -86,3 +86,13 @@ void FootballGame::debugPrint() {
 	Utils::print(gamePrint.str());
 }
 
+const char* FootballGame::getResult(){
+	if(homeScore > awayScore){
+		return "H";
+	}
+	else if(homeScore==awayScore){
+		return "D";
+	} else
+		return "A";
+}
+

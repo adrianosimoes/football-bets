@@ -30,6 +30,7 @@ public:
 	double getAwayWinOdds();
 	double getUnderOdds();
 	double getOverOdds();
+	const char* getResult();
 	virtual int getHomeScore();
 	virtual int getAwayScore();
 	virtual bool isHomeWin();

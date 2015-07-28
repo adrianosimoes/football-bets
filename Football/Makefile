@@ -6,22 +6,27 @@ CXXCOMPFLAGS = $(CXXFLAGS) -c
 SOURCES =  $(wildcard */*.cpp)
 OBJECTS = $(addprefix bin/,$(SOURCES:.cpp=.o))
 GBG	 = 		bin/*.csv bin/*.txt bin/*.exe
+FOOTBALLLIB = bin/libFootball.a
 
-LIBS = 		
+LIBS = $(FOOTBALLLIB)
 
 TARGET =	bin/Football.exe
 TEST = bin/Tests.exe
 
-$(TARGET):	$(OBJECTS) bin/Main.o
-	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Main.o $(LIBS) -o $(TARGET)
+$(TARGET): bin/Main.o $(FOOTBALLLIB)
+	$(CXX) $(CXXFLAGS) bin/Main.o $(LIBS) -o $(TARGET)
 	
-$(TEST): $(OBJECTS) bin/Tests.o 
-	$(CXX) $(CXXFLAGS) $(OBJECTS) bin/Tests.o $(LIBS) -o $(TEST)
+$(TEST): bin/Tests.o $(FOOTBALLLIB)
+	$(CXX) $(CXXFLAGS) bin/Tests.o $(LIBS) -o $(TEST)
 
 all:	$(TARGET) tests copyConfigFiles
 		cd bin; ./Tests.exe
 #		mkdir -p ${FILE_2}
 #		mkdir -p ${FILE_3}
+
+$(FOOTBALLLIB): $(OBJECTS)
+	ar rvs $@  $(OBJECTS)
+	
 
 tests: $(TEST)
 

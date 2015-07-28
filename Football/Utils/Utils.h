@@ -14,6 +14,7 @@ class Utils {
 public:
 	static map<string, string> configMap;
 	static bool debugOn();
+	static bool debugOn(string debugType);
 	static bool debugMathOn();
 	static void print(string print);
 	static void debugprint(string print);
