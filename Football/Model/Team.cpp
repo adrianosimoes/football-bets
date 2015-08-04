@@ -25,7 +25,7 @@ FootballTeam::FootballTeam(string teamName) :
 	games = vector<FootballGame*>();
 }
 
-void FootballTeam::addGame(FootballGame* game, bool homeTeam) {
+void FootballTeam::addGameStats(FootballGame* game, bool homeTeam) {
 	if (homeTeam) {
 		homeMatches++;
 		homeGoals += game->getHomeScore();
@@ -39,10 +39,9 @@ void FootballTeam::addGame(FootballGame* game, bool homeTeam) {
 
 void FootballTeam::addGame(FootballGame* game) {
 	if (game->getHomeTeam()->getID() == getID()) {
-		addGame(game, true);
-	}
-	else if (game->getAwayTeam()->getID() == getID()) {
-		addGame(game, false);
+		addGameStats(game, true);
+	} else if (game->getAwayTeam()->getID() == getID()) {
+		addGameStats(game, false);
 	} else {
 		//printf("team: %s\n", getName().c_str());
 		//game->debugPrint();
@@ -59,20 +58,84 @@ string FootballTeam::getName() {
 	return name;
 }
 
+double divide(double a, double b) {
+	return a ? b / a : 0.0;
+}
+
 double FootballTeam::getHomeScoreRating() {
-	return homeMatches ? (double) homeGoals / homeMatches : 0.0;
+	return divide(homeMatches, homeGoals);
 }
 
 double FootballTeam::getAwayScoreRating() {
-	return awayMatches ? (double) awayGoals / awayMatches : 0.0;
+	return divide(awayMatches, awayGoals);
 }
 
 double FootballTeam::getHomeDefenseRating() {
-	return homeMatches ? (double) homeConceded / homeMatches : 0.0;
+	return divide(homeMatches, homeConceded);
 }
 
 double FootballTeam::getAwayDefenseRating() {
-	return awayMatches ? (double) awayConceded / awayMatches : 0.0;
+	return divide(awayMatches, awayConceded);
+}
+
+double FootballTeam::getHomeScoreRatingRecent(int numberOfGames) {
+	int matchesRecent = 0, homeGoalsRecent = 0;
+	vector<FootballGame*>::reverse_iterator it = games.rbegin();
+	for (int i = games.size(); i > 0; i--, it++) {
+		if ((*it)->getHomeTeam()->getID() == this->getID()) {
+			matchesRecent++;
+			homeGoalsRecent += (*it)->getHomeScore();
+			if (matchesRecent >= numberOfGames) {
+				break;
+			}
+		}
+	}
+	return divide(matchesRecent, homeGoalsRecent);
+}
+
+double FootballTeam::getAwayScoreRatingRecent(int numberOfGames) {
+	int matchesRecent = 0, awayGoalsRecent = 0;
+	vector<FootballGame*>::reverse_iterator it = games.rbegin();
+	for (int i = games.size(); i > 0; i--, it++) {
+		if ((*it)->getAwayTeam()->getID() == this->getID()) {
+			matchesRecent++;
+			awayGoalsRecent += (*it)->getAwayScore();
+			if (matchesRecent >= numberOfGames) {
+				break;
+			}
+		}
+	}
+	return divide(matchesRecent, awayGoalsRecent);
+}
+
+double FootballTeam::getHomeDefenseRatingRecent(int numberOfGames) {
+	int matchesRecent = 0, homeGoalsConcRecent = 0;
+	vector<FootballGame*>::reverse_iterator it = games.rbegin();
+	for (int i = games.size(); i > 0; i--, it++) {
+		if ((*it)->getHomeTeam()->getID() == this->getID()) {
+			matchesRecent++;
+			homeGoalsConcRecent += (*it)->getAwayScore();
+			if (matchesRecent >= numberOfGames) {
+				break;
+			}
+		}
+	}
+	return divide(matchesRecent, homeGoalsConcRecent);
+}
+
+double FootballTeam::getAwayDefenseRatingRecent(int numberOfGames) {
+	int matchesRecent = 0, awayGoalsConcRecent = 0;
+	vector<FootballGame*>::reverse_iterator it = games.rbegin();
+	for (int i = games.size(); i > 0; i--, it++) {
+		if ((*it)->getAwayTeam()->getID() == this->getID()) {
+			matchesRecent++;
+			awayGoalsConcRecent += (*it)->getHomeScore();
+			if (matchesRecent >= numberOfGames) {
+				break;
+			}
+		}
+	}
+	return divide(matchesRecent, awayGoalsConcRecent);
 }
 
 void FootballTeam::debugPrint() {
@@ -81,7 +144,8 @@ void FootballTeam::debugPrint() {
 	}
 
 	std::stringstream teamPrint;
-	teamPrint << "Team:" << id << ": " << name << "\tStats:" << getHomeScoreRating()  <<";" << getAwayScoreRating();
+	teamPrint << "Team:" << id << ": " << name << "\tStats:"
+			<< getHomeScoreRating() << ";" << getAwayScoreRating();
 	Utils::print(teamPrint.str());
 }
 

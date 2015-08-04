@@ -12,10 +12,13 @@
 
 class BackTrack {
 protected:
+	int startRound;
 	Strategy* strategy;
+	double totalWinMoney;
 public:
-	BackTrack(Strategy* strategy);
+	BackTrack(Strategy* strategy, int startRound);
 	void run();
+	double getTotalWinMoney(){return totalWinMoney;}
 	virtual ~BackTrack();
 };
 

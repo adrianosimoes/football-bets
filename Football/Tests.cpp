@@ -123,8 +123,8 @@ TEST_CASE( "Predict Game", "" ) {
 	FootballGame* game2 = new FootballGame("date", teamA, teamB, 5, 3);
 	ra->addGame(game2);
 	rb->addGame(game2);
-	ra->setRatingsFromStats();
-	rb->setRatingsFromStats();
+	ra->setRatingsFromStats(5);
+	rb->setRatingsFromStats(5);
 
 	GameRating* pred1 = new GameRating(game1, ra, rb, NULL);
 
@@ -141,8 +141,8 @@ TEST_CASE( "Predict Game", "" ) {
 	TeamRating* rb2 = new TeamRating(teamB);
 	ra2->addGame(game3);
 	rb2->addGame(game3);
-	ra2->setRatingsFromStats();
-	rb2->setRatingsFromStats();
+	ra2->setRatingsFromStats(5);
+	rb2->setRatingsFromStats(5);
 	GameRating* pred3 = new GameRating(game2, ra2, rb2, NULL);
 	REQUIRE(pred3->getHomeRatingScore() == 1);
 	REQUIRE(pred3->getAwayRatingScore() == 2);
@@ -159,8 +159,8 @@ TEST_CASE( "Game Rating", "" ) {
 	FootballGame* game1 = new FootballGame("date", teamA, teamB, 3, 4);
 	ra->addGame(game1);
 	rb->addGame(game1);
-	ra->setRatingsFromStats();
-	rb->setRatingsFromStats();
+	ra->setRatingsFromStats(5);
+	rb->setRatingsFromStats(5);
 	GameRating *gr = new GameRating(game1, ra, rb, NULL);
 	REQUIRE(gr->getHomeRatingScore() == 3);
 	REQUIRE(gr->getAwayRatingScore() == 4);
@@ -333,4 +333,48 @@ TEST_CASE( "Test Bet and Rating", "" ) {
 	REQUIRE(awayBet->isHomeBet() == false);
 	REQUIRE(awayBet->isDrawBet() == false);
 	REQUIRE(awayBet->isAwayBet() == true);
+}
+
+TEST_CASE( "Ratings Recent Bigger League", "" ) {
+	FootballLeague league;
+	FootballTeam* teamA = league.getTeam("A");
+	FootballTeam* teamB = league.getTeam("B");
+	FootballTeam* teamC = league.getTeam("C");
+	FootballTeam* teamD = league.getTeam("D");
+	FootballGame* game1 = new FootballGame("date", teamA, teamB, 0, 2);
+	FootballGame* game2 = new FootballGame("date", teamD, teamC, 2, 1);
+	FootballGame* game3 = new FootballGame("date", teamC, teamA, 4, 0);
+	FootballGame* game4 = new FootballGame("date", teamB, teamD, 1, 3);
+	FootballGame* game5 = new FootballGame("date", teamB, teamA, 0, 0);
+	FootballGame* game6 = new FootballGame("date", teamC, teamB, 7, 8);
+	FootballGame* game7 = new FootballGame("date", teamA, teamC, 9, 10);
+	FootballGame* game8 = new FootballGame("date", teamD, teamB, 11, 12);
+
+	league.addGame(game1);
+	league.addGame(game2);
+	league.addGame(game3);
+	league.addGame(game4);
+	league.addGame(game5);
+	league.addGame(game6);
+	league.addGame(game7);
+	league.addGame(game8);
+
+	PredictLeague pl = PredictLeague(&league, new RatingFactory());
+
+	pl.predict(4, league.getLastRound() + 1);
+	vector<GameRating*>* predictedGames = pl.getGameRatings();
+	ASSERT_BOOL(predictedGames->size() == 2);
+
+	GameRating* seventh = (*predictedGames)[0];
+
+	REQUIRE(compareDouble(seventh->getHomeRating()->getHomeScoreRatingRecent(1), 0.00));
+	REQUIRE(compareDouble(seventh->getHomeRating()->getHomeDefenseRatingRecent(1), 2.00));
+
+	GameRating* eight = (*predictedGames)[1];
+
+	REQUIRE(compareDouble(eight->getAwayRating()->getAwayScoreRatingRecent(2), 5.00));
+	REQUIRE(compareDouble(eight->getAwayRating()->getAwayDefenseRatingRecent(2), 3.5));
+
+	REQUIRE(compareDouble(eight->getAwayRating()->getAwayScoreRatingRecent(1), 8.00));
+	REQUIRE(compareDouble(eight->getAwayRating()->getAwayDefenseRatingRecent(1), 7.00));
 }

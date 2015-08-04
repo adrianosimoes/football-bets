@@ -7,21 +7,22 @@
 
 #include "BackTrack.h"
 
-BackTrack::BackTrack(Strategy* strategy) :
-		strategy(strategy) {
+BackTrack::BackTrack(Strategy* strategy, int startRound) :
+		strategy(strategy), startRound(startRound) {
+	totalWinMoney=0;
 }
 
 void BackTrack::run() {
 	PredictLeague* pLeague = strategy->getPredictLeague();
 	FootballLeague* league = pLeague->getLeague();
-	double winMoney = 0, gamesWin = 0, sumOdds = 0;
+	double gamesWin = 0, sumOdds = 0;
 	int betsMade = 0;
 
-	for (int i = 9; i < league->getLastRound(); i++) {
+	for (int i = startRound; i < league->getLastRound(); i++) {
 		pLeague->predict(i, i+1);
 		//pLeague->debugPrint();
 		strategy->calculateBets();
-		winMoney += strategy->getWinMoney();
+		totalWinMoney += strategy->getWinMoney();
 		gamesWin += strategy->getSuccBets();
 		sumOdds += strategy->getSumOdds();
 		betsMade += strategy->getTotalBetsMade();
@@ -29,9 +30,9 @@ void BackTrack::run() {
 	}
 	printf(
 			"Winnings: %f Perc Wins: %f. Average Odd: %f. Win per Bet: %f. Bets: %d\n",
-			winMoney, betsMade > 0 ? gamesWin / betsMade : 0,
+			totalWinMoney, betsMade > 0 ? gamesWin / betsMade : 0,
 			gamesWin > 0 ? sumOdds / gamesWin : 0,
-			betsMade > 0 ? winMoney / betsMade : 0, betsMade);
+			betsMade > 0 ? totalWinMoney / betsMade : 0, betsMade);
 
 }
 BackTrack::~BackTrack() {

@@ -14,13 +14,22 @@ TeamRating::TeamRating(FootballTeam* team) :
 	awayScoreRating = 0;
 	homeDefenseRating = 0;
 	awayDefenseRating = 0;
+	homeScoreRatingRecent = 0;
+	awayScoreRatingRecent = 0;
+	homeDefenseRatingRecent = 0;
+	awayDefenseRatingRecent = 0;
 }
 
-void TeamRating::setRatingsFromStats() {
+void TeamRating::setRatingsFromStats(int numberOFRecentGames) {
 	homeScoreRating = FootballTeam::getHomeScoreRating();
 	awayScoreRating = FootballTeam::getAwayScoreRating();
 	homeDefenseRating = FootballTeam::getHomeDefenseRating();
 	awayDefenseRating = FootballTeam::getAwayDefenseRating();
+
+	homeScoreRatingRecent = FootballTeam::getHomeScoreRatingRecent(numberOFRecentGames);
+	awayScoreRatingRecent = FootballTeam::getAwayScoreRatingRecent(numberOFRecentGames);
+	homeDefenseRatingRecent = FootballTeam::getHomeDefenseRatingRecent(numberOFRecentGames);
+	awayDefenseRatingRecent = FootballTeam::getAwayDefenseRatingRecent(numberOFRecentGames);
 }
 
 double TeamRating::getHomeScoreRating(TeamRating* awayRating,
@@ -32,13 +41,13 @@ double TeamRating::getAwayScoreRating(TeamRating* homeRating,
 	return (this->awayScoreRating + homeRating->getHomeDefenseRating()) / 2;
 }
 
-void TeamRating::setRatings(double homeScoreRating, double awayScoreRating,
+/*void TeamRating::setRatings(double homeScoreRating, double awayScoreRating,
 		double homeDefenseRating, double awayDefenseRating) {
 	this->homeScoreRating = homeScoreRating;
 	this->awayScoreRating = awayScoreRating;
 	this->homeDefenseRating = homeDefenseRating;
 	this->awayDefenseRating = awayDefenseRating;
-}
+}*/
 
 void TeamRating::setRatingsToAverage(double leagueHome, double leagueAway) {
 	this->homeScoreRating = (homeMatches ? (homeGoals / homeMatches) : 30)
@@ -226,12 +235,12 @@ void GameRating::debugPrint() {
 	/*double homeAttack = homeTeam->getHomeScoreRating(), awayAttack =
 	 awayTeam->getAwayScoreRating(), homeDefense =
 	 homeTeam->getHomeDefenseRating(), awayDefense =
-	 awayTeam->getAwayDefenseRating();*/
+	 awayTeam->getAwayDefenseRating();
 	printf("Home Team: %s, Away Team: %s\n",
 			game->getHomeTeam()->getName().c_str(),
 			game->getAwayTeam()->getName().c_str());
 
-	/*printf(
+	printf(
 	 "Home attack: %f\tHome  Defense: %f\tAway Atack: %f\t,Away Defense:%f\n",
 	 homeAttack, homeDefense, awayAttack, awayDefense);
 
@@ -310,18 +319,18 @@ void RatingCalculator::calculateTeamRatings(int startRound, int endRound) {
 		TeamRating* awayRating = getTeamRating((*i)->getAwayTeam());
 		homeRating->addGame(*i);
 		awayRating->addGame(*i);
-		averageTeamRating->addGame(*i, true);
-		averageTeamRating->addGame(*i, false);
+		averageTeamRating->addGameStats(*i, true);
+		averageTeamRating->addGameStats(*i, false);
 	}
 
-	averageTeamRating->setRatingsFromStats();
+	//averageTeamRating->setRatingsFromStats(0);
 	//averageTeamRating->debugPrint();
 	std::map<FootballTeam*, TeamRating*>::iterator j;
 	for (j = teamRatings.begin(); j != teamRatings.end(); j++) {
 		TeamRating* rating = (*j).second;
 		//rating->setRatingsToAverage(averageTeamRating->getHomeScoreRating(),
 		//		averageTeamRating->getAwayScoreRating());
-		rating->setRatingsFromStats();
+		rating->setRatingsFromStats(10);
 	}
 
 	delete games;

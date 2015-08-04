@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
 }
 
 void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
+	double totalMoney=0;
 	map<unsigned int, FootballLeague*>::iterator i;
 	for (i = leagues.begin(); i != leagues.end(); i++) {
 		printf("League: %s\n", i->second->getName().c_str());
@@ -96,14 +97,16 @@ void predictLeagues(map<unsigned int, FootballLeague*> leagues) {
 		//plp->printResultsHDL();
 		//(*i).second->printStats(true);
 		//for (int j = 15; j <= 25; j++) {
-			//HDAStrategy* strat = new HDAStrategy(plp, 13);
-			UOStrategy* strat = new UOStrategy(plp, 9);
-			BackTrack* bt = new BackTrack(strat);
+			HDAStrategy* strat = new HDAStrategy(plp, 9);
+			//UOStrategy* strat = new UOStrategy(plp, 9);
+			BackTrack* bt = new BackTrack(strat,7);
 			bt->run();
+			totalMoney += bt->getTotalWinMoney();
 			delete strat;
 			delete bt;
 		//}
 		delete plp;
 	}
+	printf("Total Win:%f\n", totalMoney);
 	printf("Finished\n");
 }
