@@ -9,6 +9,7 @@
 void StatisticsPrint::printMatchStatisticsForPrediction(FootballGame* game, GameRating* gameRating ) {
 	TeamRating* homeTeam = gameRating->getHomeRating();
 	TeamRating* awayTeam = gameRating->getAwayRating();
+	int recentGames =8;
 
 	if (!Utils::debugOn(string("printMatchStatisticsForPrediction"))) {
 			return;
@@ -18,7 +19,7 @@ void StatisticsPrint::printMatchStatisticsForPrediction(FootballGame* game, Game
 	printf("%f,%f,%f,%f,",homeTeam->getHomeScoreRating(), homeTeam->getHomeDefenseRating(), awayTeam->getAwayScoreRating(), awayTeam->getAwayDefenseRating());
 
 	//A Av. Goals S, A Av. Goals C, A Av. Goals S H, A aV. Goals C H
-	printf("%f,%f,%f,%f,",homeTeam->getHomeScoreRatingRecent(10), homeTeam->getHomeDefenseRatingRecent(10), awayTeam->getAwayScoreRatingRecent(10), awayTeam->getAwayDefenseRatingRecent(10));
+	printf("%f,%f,%f,%f,",homeTeam->getHomeScoreRatingRecent(recentGames), homeTeam->getHomeDefenseRatingRecent(recentGames), awayTeam->getAwayScoreRatingRecent(recentGames), awayTeam->getAwayDefenseRatingRecent(recentGames));
 
 	//Result
 	printf("%d,%d,%c,%d\n", game->getHomeScore(), game->getAwayScore(), *game->getResult(),game->getHomeScore()-game->getAwayScore());
