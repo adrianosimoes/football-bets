@@ -26,10 +26,10 @@ void TeamRating::setRatingsFromStats(int numberOFRecentGames) {
 	homeDefenseRating = FootballTeam::getHomeDefenseRating();
 	awayDefenseRating = FootballTeam::getAwayDefenseRating();
 
-	homeScoreRatingRecent = FootballTeam::getHomeScoreRatingRecent(numberOFRecentGames);
-	awayScoreRatingRecent = FootballTeam::getAwayScoreRatingRecent(numberOFRecentGames);
-	homeDefenseRatingRecent = FootballTeam::getHomeDefenseRatingRecent(numberOFRecentGames);
-	awayDefenseRatingRecent = FootballTeam::getAwayDefenseRatingRecent(numberOFRecentGames);
+	/*homeScoreRatingRecent = getHomeScoreRatingRecent(numberOFRecentGames);
+	awayScoreRatingRecent = getAwayScoreRatingRecent(numberOFRecentGames);
+	homeDefenseRatingRecent = getHomeDefenseRatingRecent(numberOFRecentGames);
+	awayDefenseRatingRecent = getAwayDefenseRatingRecent(numberOFRecentGames);*/
 }
 
 double TeamRating::getHomeScoreRating(TeamRating* awayRating,

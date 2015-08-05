@@ -5,8 +5,7 @@
  *      Author: Adriano
  */
 
-#define CATCH_CONFIG_MAIN
-#include "Tests.hpp"
+#include "Tests.h"
 #include "includes.h"
 #include "Model/Model.h"
 #include "Predict/PredictLeague.h"
@@ -18,6 +17,7 @@ bool compareDouble(double num1, double num2) {
 	double diff = num1 - num2;
 	return fabs(num1 - num2) < 0.001;
 }
+
 
 #define ASSERT_BOOL(A) REQUIRE((bool)(A))
 
@@ -378,3 +378,4 @@ TEST_CASE( "Ratings Recent Bigger League", "" ) {
 	REQUIRE(compareDouble(eight->getAwayRating()->getAwayScoreRatingRecent(1), 8.00));
 	REQUIRE(compareDouble(eight->getAwayRating()->getAwayDefenseRatingRecent(1), 7.00));
 }
+
